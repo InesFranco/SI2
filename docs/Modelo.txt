@@ -1,0 +1,74 @@
+Maintain4ver - Empresa de manutenção
+		- Implementar sistema de informação sobre gestão de activoss físicos
+
+
+activo:
+	-id(PK)
+	-nome
+	-data de aquisição(dd-mm-aaaa)
+	-estado(toma valores '0' ou '1')
+	-marca(não obrigatório)
+	-modelo(não obrigatório)
+
+activo-preçocomercial:
+	-idactivo(FK)
+	-preço(em euros)
+	-dataAlteração(dd-mm-aaaa)
+
+activo-filhos:
+	-idactivopai(FK)
+	-idactivofilho(FK)
+
+	|
+        v
+****Um activo tem um tipo caracterizado por um identificador
+e uma descri¸c˜ao. Um activo pode ser constitu´ıdo por outros activos, e.g. uma piscina constitu´ıda
+por uma bomba de ´agua, onde ambos s˜ao activos, constituindo uma hierarquia de activos. O tipo
+do activo de topo da hierarquia tem de ser igual ao(s) tipo(s) do(s) activo(s) “filho(s)”.
+
+funcionario:
+	-numeroidentificação(PK, CC e/ou NIF)
+	-nome(completo)
+	-datanascimento(dd-mm-aaaa)
+	-endereço(morada, código postal e localidade)
+	-profissão
+	-telefone(fixo e/ou móvel)
+	-email
+*existe uma pessoa que gere o activo e que nao pode fazer parte da quipa que faz a intervenção do mesmo.
+*um funcionario so pode pertencer a uma equipa
+
+funcionario-competencia:
+	-funcionarioid(FK)
+	-descrição
+	
+intervenção:
+	-id(PK)
+	-descrição('avaria', 'rutura', 'inspecção')
+	-estado('por atribuir', 'em análise' 'em execução', 'concluido')
+	-valor(em euros)
+	-datainicio(dd-mm-aaaa)
+	-datafim(dd-mm-aaaa)
+*datainicio deve ser maior que datafim
+*data de intervenção deve ser superior a data de aquisição do activo
+
+equipamanutenção:
+	-codigoequipa
+	-localização
+	-numeroelementos
+	-idsupervisor(FK)
+**numroelementos no  minimo duas pessoas
+
+funcionario-equipa:
+	-idfuncionario(FK)
+	-idequipa(FK)
+
+intervenção-equipa
+	-codigoequipa(FK)
+	-idintervenção(FK)
+	-data(dd-mm-aaaa)
+*só pode ser feito se as competências da equipa são compatíveis com a descrição da intevenção
+*intervenção fica 'por atribuir' se não houver uma equipa disponível
+*por equipa so pode haver até 3 intervenções
+
+
+	
