@@ -9,17 +9,27 @@ activo:
 	-estado(toma valores '0' ou '1')
 	-marca(não obrigatório)
 	-modelo(não obrigatório)
+	-tipo(FK)
 
-activo-preçocomercial:
+activo_preçocomercial:
 	-idactivo(FK)
 	-preço(em euros)
 	-dataAlteração(dd-mm-aaaa)
 
-activo-filhos:
+ativo_gerente:
+    -id_activo(FK)
+    -id_gerente(FK)
+**quem gere o activo nao pode partecipar na equipa que faz a intervenção
+
+tipo_activo:
+    -id(PK)
+    -description
+
+activo_filhos:
 	-idactivopai(FK)
 	-idactivofilho(FK)
 
-	|
+	    |
         v
 ****Um activo tem um tipo caracterizado por um identificador
 e uma descrição. Um activo pode ser constitruido por outros activos, e.g. uma piscina constituída
@@ -34,13 +44,20 @@ funcionario:
 	-profissão
 	-telefone(fixo e/ou móvel)
 	-email
+	-id_competencia(FK)
+
 *existe uma pessoa que gere o activo e que nao pode fazer parte da quipa que faz a intervenção do mesmo.
 *um funcionario so pode pertencer a uma equipa
+(elemento equipa especificação de funcionario)
 
-funcionario-competencia:
+elemento_equipa_competencia:
 	-funcionarioid(FK)
-	-descrição
-	
+	-id_competencia(FK)
+
+competencia:
+    -id_competencia(PK)
+    -descrição
+
 intervenção:
 	-id(PK)
 	-descrição('avaria', 'rutura', 'inspecção')
@@ -61,6 +78,7 @@ equipamanutenção:
 funcionario-equipa:
 	-idfuncionario(FK)
 	-idequipa(FK)
+
 
 intervenção-equipa
 	-codigoequipa(FK)
