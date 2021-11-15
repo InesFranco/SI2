@@ -22,8 +22,8 @@ activo-filhos:
 	|
         v
 ****Um activo tem um tipo caracterizado por um identificador
-e uma descri¸c˜ao. Um activo pode ser constitu´ıdo por outros activos, e.g. uma piscina constitu´ıda
-por uma bomba de ´agua, onde ambos s˜ao activos, constituindo uma hierarquia de activos. O tipo
+e uma descrição. Um activo pode ser constitruido por outros activos, e.g. uma piscina constituída
+por uma bomba de água, onde ambos são activos, constituindo uma hierarquia de activos. O tipo
 do activo de topo da hierarquia tem de ser igual ao(s) tipo(s) do(s) activo(s) “filho(s)”.
 
 funcionario:
