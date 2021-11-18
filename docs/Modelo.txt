@@ -14,20 +14,20 @@ activo:
 activo_preçocomercial:
 	-idactivo(FK)
 	-preço(em euros)
-	-dataAlteração(dd-mm-aaaa)
+	-dataAlteração(dd-mm-aaaa)(key)
 
 ativo_gerente:
     -id_activo(FK)
     -id_gerente(FK)
 **quem gere o activo nao pode partecipar na equipa que faz a intervenção
 
-tipo_activo:
-    -id(PK)
+tipo_de_activo:
+    -id_tipo(PK)
     -description
 
 activo_filhos:
 	-idactivopai(FK)
-	-idactivofilho(FK)
+	-idactivofilho(PK)
 
 	    |
         v
@@ -37,20 +37,21 @@ por uma bomba de água, onde ambos são activos, constituindo uma hierarquia de 
 do activo de topo da hierarquia tem de ser igual ao(s) tipo(s) do(s) activo(s) “filho(s)”.
 
 funcionario:
-	-numeroidentificação(PK, CC e/ou NIF)
+    -id(PK)
+	-numeroidentificação(CC e/ou NIF)
 	-nome(completo)
 	-datanascimento(dd-mm-aaaa)
 	-endereço(morada, código postal e localidade)
 	-profissão
 	-telefone(fixo e/ou móvel)
 	-email
-	-id_competencia(FK)
+
 
 *existe uma pessoa que gere o activo e que nao pode fazer parte da quipa que faz a intervenção do mesmo.
 *um funcionario so pode pertencer a uma equipa
 (elemento equipa especificação de funcionario)
 
-elemento_equipa_competencia:
+funcionario_competencia:
 	-funcionarioid(FK)
 	-id_competencia(FK)
 
@@ -60,7 +61,7 @@ competencia:
 
 intervenção:
 	-id(PK)
-	-descrição('avaria', 'rutura', 'inspecção')
+	-descrição(um termo)
 	-estado('por atribuir', 'em análise' 'em execução', 'concluido')
 	-valor(em euros)
 	-datainicio(dd-mm-aaaa)
@@ -68,19 +69,19 @@ intervenção:
 *datainicio deve ser maior que datafim
 *data de intervenção deve ser superior a data de aquisição do activo
 
-equipamanutenção:
-	-codigoequipa
+equipa:
+	-codigo_equipa(PK)
 	-localização
-	-numeroelementos
-	-idsupervisor(FK)
+	-numero_elementos
+	-id_supervisor(FK)
 **numroelementos no  minimo duas pessoas
 
-funcionario-equipa:
+funcionario_equipa:
 	-idfuncionario(FK)
 	-idequipa(FK)
 
 
-intervenção-equipa
+intervenção_equipa
 	-codigoequipa(FK)
 	-idintervenção(FK)
 	-data(dd-mm-aaaa)
