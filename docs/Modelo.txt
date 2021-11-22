@@ -11,7 +11,7 @@ activo:
 	-modelo(não obrigatório)
 	-tipo(FK)
 
-activo_preçocomercial:
+activo_preçocomercial: 
 	-idactivo(FK)
 	-preço(em euros)
 	-dataAlteração(dd-mm-aaaa)(key)
@@ -58,7 +58,7 @@ funcionario_competencia:
 competencia:
     -id_competencia(PK)
     -descrição
-
+_____________________________________________________
 intervenção:
 	-id(PK)
 	-descrição(um termo)
