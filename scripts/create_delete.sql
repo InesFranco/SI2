@@ -9,26 +9,17 @@ IF (DB_ID('AP2') IS NULL)
 GO
 USE AP2;
 
-
-
-
+----------------------------DROP------------------------------------------------
 IF OBJECT_ID('activo_gerente') IS NOT NULL
 	DROP TABLE activo_gerente
-
 IF OBJECT_ID('activo_preçocomercial') IS NOT NULL
 	DROP TABLE activo_preçocomercial
 IF OBJECT_ID('activo_filho') IS NOT NULL
 	DROP TABLE activo_filho
-IF OBJECT_ID('funcionario') IS NOT NULL
-	DROP TABLE funcionario
-IF OBJECT_ID('competencia') IS NOT NULL
-	DROP TABLE competencia
-IF OBJECT_ID('funcionario_competencia') IS NOT NULL
-	DROP TABLE funcionario_competencia
-IF OBJECT_ID('intervencao') IS NOT NULL
-	DROP TABLE intervencao
 IF OBJECT_ID('equipa') IS NOT NULL
 	DROP TABLE equipa
+IF OBJECT_ID('funcionario_competencia') IS NOT NULL
+	DROP TABLE funcionario_competencia
 IF OBJECT_ID('funcionario_equipa') IS NOT NULL
 	DROP TABLE funcionario_equipa
 IF OBJECT_ID('intervencao_equipa') IS NOT NULL
@@ -37,6 +28,16 @@ IF OBJECT_ID('activo') IS NOT NULL
 	DROP TABLE activo
 IF OBJECT_ID('tipo_activo') IS NOT NULL
 	DROP TABLE tipo_activo
+IF OBJECT_ID('funcionario') IS NOT NULL
+	DROP TABLE funcionario
+IF OBJECT_ID('competencia') IS NOT NULL
+	DROP TABLE competencia
+IF OBJECT_ID('intervencao') IS NOT NULL
+	DROP TABLE intervencao
+
+-----------------------------------CREATE-------------------------------
+
+
 
 
 CREATE TABLE tipo_activo(
@@ -46,18 +47,14 @@ CREATE TABLE tipo_activo(
 
 CREATE TABLE activo
 (
-    activo_id INT NOT NULL PRIMARY KEY,
-    nome VARCHAR NOT NULL,
+    activo_id INT IDENTITY(1,1) PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
     data_aquisicao DATE NOT NULL,
     estado Bit NOT NULL,
-    marca VARCHAR,
-    modelo VARCHAR,
+    marca VARCHAR(20),
+    modelo VARCHAR(20),
     tipo INT FOREIGN KEY REFERENCES tipo_activo,
 )
-
-
-
-
 
 
 CREATE TABLE activo_preçocomercial
@@ -79,14 +76,14 @@ CREATE TABLE activo_filho
 
 CREATE TABLE funcionario
 (
-    id_funcionario INT NOT NULL PRIMARY KEY ,
+    id_funcionario INT IDENTITY(1,1) PRIMARY KEY ,
     numero_identificacao INT NOT NULL,
     nome VARCHAR(50),
     data_nascimento DATE,
     endereco VARCHAR(50),
-    profissao VARCHAR(15),
+    profissao VARCHAR(50),
     telefone INT,
-    email VARCHAR check(email LIKE '%_@__%.__%'),
+    email VARCHAR(50) check(email LIKE '%_@__%.__%'),
 )
 
 CREATE TABLE activo_gerente(
@@ -115,8 +112,8 @@ CREATE TABLE funcionario_competencia
 CREATE TABLE intervencao
 (
     id_intervencao INT NOT NULL PRIMARY KEY,
-    descricao VARCHAR NOT NULL,
-    estado VARCHAR NOT NULL,
+    descricao VARCHAR(50) NOT NULL,
+    estado VARCHAR(50) NOT NULL,
     valor FLOAT NOT NULL,
     data_inicio DATE NOT NULL,
     data_fim DATE NOT NULL,
@@ -126,7 +123,7 @@ CREATE TABLE intervencao
 CREATE TABLE equipa
 (
     codigo_equipa INT NOT NULL PRIMARY KEY,
-    localizacao VARCHAR NOT NULL,
+    localizacao VARCHAR(50) NOT NULL,
     num_elems INT NOT NULL check(num_elems >= 2),
     id_supervisor INT NOT NULL
 )
