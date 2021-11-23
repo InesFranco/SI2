@@ -1,25 +1,64 @@
-CREATE TABLE activo
-(
-    activo_id INT NOT NULL PRIMARY KEY,
-    nome VARCHAR NOT NULL,
-    data_aquisicao DATE NOT NULL,
-    state Bit NOT NULL,
-    marca VARCHAR,
-    modelo VARCHAR,
-    tipo INT FOREIGN KEY REFERENCES tipo_activo,
-)
 
-CREATE TABLE activo_gerente(
-    id_activo INT FOREIGN KEY REFERENCES activo,
-    id_gerente INT FOREIGN KEY REFERENCES funcionario,
-    PRIMARY KEY (id_activo, id_gerente)
-)
+SET XACT_ABORT ON
+SET NOCOUNT ON
+IF (DB_ID('AP2') IS NULL)
+    BEGIN
+        CREATE DATABASE AP2;
+    end
+
+GO
+USE AP2;
+
+
+
+
+IF OBJECT_ID('activo_gerente') IS NOT NULL
+	DROP TABLE activo_gerente
+
+IF OBJECT_ID('activo_preçocomercial') IS NOT NULL
+	DROP TABLE activo_preçocomercial
+IF OBJECT_ID('activo_filho') IS NOT NULL
+	DROP TABLE activo_filho
+IF OBJECT_ID('funcionario') IS NOT NULL
+	DROP TABLE funcionario
+IF OBJECT_ID('competencia') IS NOT NULL
+	DROP TABLE competencia
+IF OBJECT_ID('funcionario_competencia') IS NOT NULL
+	DROP TABLE funcionario_competencia
+IF OBJECT_ID('intervencao') IS NOT NULL
+	DROP TABLE intervencao
+IF OBJECT_ID('equipa') IS NOT NULL
+	DROP TABLE equipa
+IF OBJECT_ID('funcionario_equipa') IS NOT NULL
+	DROP TABLE funcionario_equipa
+IF OBJECT_ID('intervencao_equipa') IS NOT NULL
+	DROP TABLE intervencao_equipa
+IF OBJECT_ID('activo') IS NOT NULL
+	DROP TABLE activo
+IF OBJECT_ID('tipo_activo') IS NOT NULL
+	DROP TABLE tipo_activo
 
 
 CREATE TABLE tipo_activo(
     id_tipo INT PRIMARY KEY,
     description VARCHAR(50)
 )
+
+CREATE TABLE activo
+(
+    activo_id INT NOT NULL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    data_aquisicao DATE NOT NULL,
+    estado Bit NOT NULL,
+    marca VARCHAR,
+    modelo VARCHAR,
+    tipo INT FOREIGN KEY REFERENCES tipo_activo,
+)
+
+
+
+
+
 
 CREATE TABLE activo_preçocomercial
 (
@@ -48,6 +87,12 @@ CREATE TABLE funcionario
     profissao VARCHAR(15),
     telefone INT,
     email VARCHAR check(email LIKE '%_@__%.__%'),
+)
+
+CREATE TABLE activo_gerente(
+    id_activo INT FOREIGN KEY REFERENCES activo,
+    id_gerente INT FOREIGN KEY REFERENCES funcionario,
+    PRIMARY KEY (id_activo, id_gerente)
 )
 
 CREATE TABLE competencia
