@@ -12,10 +12,12 @@ activo:
 	-tipo(FK)
 
 estado: '0' ou '1'(avaria ou funcional)
-activo_preçocomercial: 
+activo_preçocomercial:
+    -id(PK)
 	-idactivo(FK)
 	-preço(em euros)
-	-dataAlteração(dd-mm-aaaa)(key)
+	-dataAlteração(dd-mm-aaaa)
+	-actual(bit)
 
 ativo_gerente:
     -id_activo(FK)

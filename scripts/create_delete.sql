@@ -1,13 +1,13 @@
 
 SET XACT_ABORT ON
 SET NOCOUNT ON
-IF (DB_ID('AP2') IS NULL)
+IF (DB_ID('Project1') IS NULL)
     BEGIN
-        CREATE DATABASE AP2;
+        CREATE DATABASE Project1;
     end
 
 GO
-USE AP2;
+USE Project1;
 
 ----------------------------DROP------------------------------------------------
 IF OBJECT_ID('activo_gerente') IS NOT NULL
@@ -41,7 +41,7 @@ IF OBJECT_ID('intervencao') IS NOT NULL
 
 
 CREATE TABLE tipo_activo(
-    id_tipo INT PRIMARY KEY,
+    id_tipo INT IDENTITY(1,1) PRIMARY KEY,
     description VARCHAR(50)
 )
 
@@ -94,8 +94,8 @@ CREATE TABLE activo_gerente(
 
 CREATE TABLE competencia
 (
-    id_competencia INT NOT NULL PRIMARY KEY ,
-    descricao VARCHAR NOT NULL
+    id_competencia INT IDENTITY(1,1) PRIMARY KEY,
+    descricao VARCHAR(50) NOT NULL
 )
 
 
@@ -111,7 +111,7 @@ CREATE TABLE funcionario_competencia
 
 CREATE TABLE intervencao
 (
-    id_intervencao INT NOT NULL PRIMARY KEY,
+    id_intervencao INT IDENTITY(1,1) PRIMARY KEY,
     descricao VARCHAR(50) NOT NULL,
     estado VARCHAR(50) NOT NULL,
     valor FLOAT NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE intervencao
 
 CREATE TABLE equipa
 (
-    codigo_equipa INT NOT NULL PRIMARY KEY,
+    codigo_equipa INT IDENTITY(1,1) PRIMARY KEY,
     localizacao VARCHAR(50) NOT NULL,
     num_elems INT NOT NULL check(num_elems >= 2),
     id_supervisor INT NOT NULL
@@ -130,8 +130,8 @@ CREATE TABLE equipa
 
 CREATE TABLE funcionario_equipa
 (
-    codigo_equipa INT NOT NULL FOREIGN KEY REFERENCES equipa,
     id_funcionario INT NOT NULL FOREIGN KEY REFERENCES funcionario,
+    codigo_equipa INT NOT NULL FOREIGN KEY REFERENCES equipa,
     PRIMARY KEY(codigo_equipa, id_funcionario)
 )
 
