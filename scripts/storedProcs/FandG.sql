@@ -1,9 +1,8 @@
 USE Project1
 GO
 --f)
-Create PROCEDURE p_criaInter
-    (@id_intervencao INT IDENTITY(1,1),
-    @descricao VARCHAR(50),
+Create Procedure p_criaInter
+    (@descricao VARCHAR(50),
     @estado VARCHAR(50),
     @valor FLOAT,
     @data_inicio DATE,
@@ -11,24 +10,29 @@ Create PROCEDURE p_criaInter
 
 AS
         Begin
-            Insert into intervencao (id_intervencao, descricao, estado, valor, data_inicio, data_fim)
-            values (@id_intervencao, @descricao, @estado, @valor, @data_inicio, @data_fim)
+            IF OBJECT_ID('intervencao') IS NOT NULL
+            begin
+                Insert into intervencao (descricao, estado, valor, data_inicio, data_fim)
+                values (@descricao, @estado, @valor, @data_inicio, @data_fim)
+            end
         end
 
-    set dateformat dmy
-
-exec p_criaInter   1, "banana", "Presente", 6.66, '19/06/1999', '30/11/2021'
+exec p_criaInter "banana", "Presente", 6.66, '19/06/1999', '30/11/2021'
+drop procedure p_criaInter
 
 --g)
 create procedure p_CriaEquipa
-    create table equipa
-        (@codigo_equipa int identity(1,1),
-        @localizacao VARCHAR(50),
-        @num_elems int,
-        @id_supervisor int)
-
+    (@localizacao VARCHAR(50),
+    @num_elems int,
+    @id_supervisor int)
 as
     begin
-        insert into equipa (codigo_equipa, localizacao, num_elems, id_supervisor)
-        values (@codigo_equipa, @localizacao, @num_elems, @id_supervisor)
+        IF OBJECT_ID('equipa') IS NOT NULL
+        begin
+            insert into equipa (localizacao, num_elems, id_supervisor)
+            values (@localizacao, @num_elems, @id_supervisor)
+        end
     end
+
+exec p_CriaEquipa "Armazém", 5, 15
+drop procedure p_CriaEquipa
