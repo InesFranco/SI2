@@ -1,4 +1,3 @@
-
 SET XACT_ABORT ON
 SET NOCOUNT ON
 IF (DB_ID('Project1') IS NULL)
@@ -10,30 +9,30 @@ GO
 USE Project1;
 
 ----------------------------DROP------------------------------------------------
-IF OBJECT_ID('activo_gerente') IS NOT NULL
-	DROP TABLE activo_gerente
-IF OBJECT_ID('activo_preçocomercial') IS NOT NULL
-	DROP TABLE activo_preçocomercial
-IF OBJECT_ID('activo_filho') IS NOT NULL
-	DROP TABLE activo_filho
-IF OBJECT_ID('equipa') IS NOT NULL
-	DROP TABLE equipa
-IF OBJECT_ID('funcionario_competencia') IS NOT NULL
-	DROP TABLE funcionario_competencia
-IF OBJECT_ID('funcionario_equipa') IS NOT NULL
-	DROP TABLE funcionario_equipa
 IF OBJECT_ID('intervencao_equipa') IS NOT NULL
 	DROP TABLE intervencao_equipa
+IF OBJECT_ID('funcionario_equipa') IS NOT NULL
+	DROP TABLE funcionario_equipa
+IF OBJECT_ID('equipa') IS NOT NULL
+	DROP TABLE equipa
+IF OBJECT_ID('intervencao') IS NOT NULL
+	DROP TABLE intervencao
+IF OBJECT_ID('funcionario_competencia') IS NOT NULL
+	DROP TABLE funcionario_competencia
+IF OBJECT_ID('competencia') IS NOT NULL
+	DROP TABLE competencia
+IF OBJECT_ID('activo_gerente') IS NOT NULL
+	DROP TABLE activo_gerente
+IF OBJECT_ID('funcionario') IS NOT NULL
+	DROP TABLE funcionario
+IF OBJECT_ID('activo_filho') IS NOT NULL
+	DROP TABLE activo_filho
+IF OBJECT_ID('activo_preçocomercial') IS NOT NULL
+	DROP TABLE activo_preçocomercial
 IF OBJECT_ID('activo') IS NOT NULL
 	DROP TABLE activo
 IF OBJECT_ID('tipo_activo') IS NOT NULL
 	DROP TABLE tipo_activo
-IF OBJECT_ID('funcionario') IS NOT NULL
-	DROP TABLE funcionario
-IF OBJECT_ID('competencia') IS NOT NULL
-	DROP TABLE competencia
-IF OBJECT_ID('intervencao') IS NOT NULL
-	DROP TABLE intervencao
 
 -----------------------------------CREATE-------------------------------
 

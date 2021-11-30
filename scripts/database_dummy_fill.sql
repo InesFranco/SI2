@@ -33,8 +33,8 @@ BEGIN TRAN
     INSERT INTO activo_preçocomercial VALUES(1, 2019, '2021-10-22')
     INSERT INTO activo_preçocomercial VALUES(1, 1882, '2021-10-20')
 
-    INSERT INTO competencia VALUES('arranjador de piscinas')
-    INSERT INTO competencia VALUES('criador de piscinas')
+    INSERT INTO competencia VALUES('arranjar piscinas')
+    INSERT INTO competencia VALUES('drenar piscinas')
 
 
 
@@ -51,8 +51,8 @@ BEGIN TRAN
     INSERT INTO funcionario_equipa VALUES(3, 2)
     INSERT INTO funcionario_equipa VALUES(4, 1)
 
-    INSERT INTO intervencao VALUES('avaria', 'por atribuir', 200, '2021-04-30','2021-05-01')
-    INSERT INTO intervencao VALUES('avaria', 'concluido', 300, '2021-04-30', '2021-05-05')
+    INSERT INTO intervencao VALUES('arranjar piscinas', 'por atribuir', 200, '2021-04-30','2021-05-01')
+    INSERT INTO intervencao VALUES('drenar piscinas', 'concluido', 300, '2021-04-30', '2021-05-05')
 
 
 COMMIT
