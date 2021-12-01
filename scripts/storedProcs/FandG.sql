@@ -115,7 +115,139 @@ exec p_actualizaInformacaoFuncionario @id_funcionario = 2, @telefone = 92000000
 drop procedure p_actualizaInformacaoFuncionario
  --d até aqui
 
+--e
+Create Procedure p_encontrarEquipaParaIntervencao(@id_intervencao int)
+as
+begin
+    declare @competenciaNecessaria varchar(50)
+    set @competenciaNecessaria = (select descricao from intervencao where @id_intervencao = id_intervencao)
 
+    --procurar equipas que nao tenham mais de 3 intervencoes atribuidas e que tenham as competencias
+
+        begin
+        DECLARE @equipa_cursor CURSOR;
+        DECLARE @equipa int;
+        BEGIN
+        SET @equipa_cursor = CURSOR FOR
+        select codigo_equipa from IntervencoesPorEquipa
+        where intervencoes_atribuidas < 3
+
+        OPEN @equipa_cursor
+        FETCH NEXT FROM @equipa_cursor
+        INTO @equipa
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            if dbo.verificarCompetenciasEquipa(@equipa, @competenciaNecessaria ) = 1
+                begin
+                    select * into #equipasValidas from equipa where codigo_equipa = @equipa
+                end
+        FETCH NEXT FROM @equipa_cursor
+        INTO @equipa
+        END;
+
+        CLOSE @equipa_cursor;
+        DEALLOCATE @equipa_cursor;
+        end
+
+
+    end
+         --check latest intervention
+
+    end
+
+
+
+
+
+--create view with the team id, element number and number of interventions already attributed
+Create view IntervencoesPorEquipa
+    as
+    select ie.codigo_equipa, e.num_elems, count(ie.codigo_equipa) as intervencoes_atribuidas
+    from intervencao_equipa ie
+    join equipa e on ie.codigo_equipa = e.codigo_equipa
+    where(
+        (select num_elems
+        from equipa
+        where equipa.codigo_equipa = ie.codigo_equipa) >= 2
+        )
+    GROUP BY ie.codigo_equipa, e.num_elems
+
+
+create function verificarCompetenciasEquipa
+    (
+        @id_equipa int,
+        @competenciaNecessaria varchar(50)
+    )
+    returns bit
+as
+    begin
+        DECLARE @funcionario_cursor CURSOR;
+        DECLARE @funcionario int;
+        BEGIN
+        SET @funcionario_cursor = CURSOR FOR
+        select id_funcionario from funcionario_equipa
+        where @id_equipa =  @id_equipa
+
+        OPEN @funcionario_cursor
+        FETCH NEXT FROM @funcionario_cursor
+        INTO @funcionario
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            if dbo.verificarCompetenciasFuncionario(@funcionario, @competenciaNecessaria) = 1
+                begin
+                    return 1
+                end
+        FETCH NEXT FROM @funcionario_cursor
+        INTO @funcionario
+        END;
+
+        CLOSE @funcionario_cursor;
+        DEALLOCATE @funcionario_cursor;
+        return 0
+        END;
+    end
+
+
+
+--verifica se o funcionario tem as competencias necessarias
+create function verificarCompetenciasFuncionario(
+    @id_funcionario int,
+    @competenciaNecessaria varchar(50)
+    )
+    returns bit
+as
+    begin
+        DECLARE @competencia_cursor CURSOR;
+        DECLARE @competencia int;
+        BEGIN
+        SET @competencia_cursor = CURSOR FOR
+        select id_competencia from funcionario_competencia
+        where id_funcionario =  @id_funcionario
+
+        OPEN @competencia_cursor
+        FETCH NEXT FROM @competencia_cursor
+        INTO @competencia
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            if(@competencia like @competenciaNecessaria)
+                return 1
+        FETCH NEXT FROM @competencia_cursor
+        INTO @competencia
+        END;
+
+    CLOSE @competencia_cursor;
+    DEALLOCATE @competencia_cursor;
+    END;
+    return 0
+    end
+
+
+
+drop FUNCTION verificarCompetenciasFuncionario
+select dbo.verificarCompetenciasFuncionario(1,1)
 
 
 
