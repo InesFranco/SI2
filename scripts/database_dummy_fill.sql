@@ -12,6 +12,7 @@ BEGIN TRAN
 	INSERT INTO activo VALUES('bomba',GETDATE(),1, 'Jacksonville', '8888xy', 2)
     INSERT INTO activo VALUES('bomba',GETDATE(),1, 'Jacksonville', '8888xy', 2)
     INSERT INTO activo VALUES('bomba',GETDATE(),1, 'Jacksonville', '8888xy', 2)
+    INSERT INTO activo VALUES('aquecedor',GETDATE(),1, 'Mcgrooves', '8866xy', 2)
 
     INSERT INTO activo_filho VALUES(1, 2)
     INSERT INTO activo_filho VALUES(1, 3)
@@ -51,8 +52,12 @@ BEGIN TRAN
     INSERT INTO funcionario_equipa VALUES(3, 2)
     INSERT INTO funcionario_equipa VALUES(4, 1)
 
-    INSERT INTO intervencao VALUES('arranjar piscinas', 'por atribuir', 200, '2021-04-30','2021-05-01')
-    INSERT INTO intervencao VALUES('drenar piscinas', 'concluido', 300, '2021-04-30', '2021-05-05')
+    INSERT INTO intervencao VALUES(1,'arranjar piscinas', 'por atribuir', 200, '2021-04-30','2021-05-01')
+    INSERT INTO intervencao VALUES(1,'drenar piscinas', 'concluido', 300, '2021-04-30', '2021-05-05')
+    INSERT INTO intervencao VALUES(5,'arranjar aquecedor', 'em execução', 500, '2021-05-2', '2021-05-05')
 
+    INSERT INTO intervencao_equipa VALUES(1, 1,'2021-04-30')
+    INSERT INTO intervencao_equipa VALUES(1, 2,'2021-04-30')
+    INSERT INTO intervencao_equipa VALUES(2, 3,'2021-04-30')
 
 COMMIT

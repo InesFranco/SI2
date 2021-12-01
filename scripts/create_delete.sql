@@ -111,6 +111,7 @@ CREATE TABLE funcionario_competencia
 CREATE TABLE intervencao
 (
     id_intervencao INT IDENTITY(1,1) PRIMARY KEY,
+    id_activo INT FOREIGN KEY REFERENCES activo,
     descricao VARCHAR(50) NOT NULL,
     estado VARCHAR(50) NOT NULL,
     valor FLOAT NOT NULL,
@@ -123,7 +124,7 @@ CREATE TABLE equipa
 (
     codigo_equipa INT IDENTITY(1,1) PRIMARY KEY,
     localizacao VARCHAR(50) NOT NULL,
-    num_elems INT NOT NULL check(num_elems >= 2),
+    num_elems INT NOT NULL,
     id_supervisor INT NOT NULL
 )
 
