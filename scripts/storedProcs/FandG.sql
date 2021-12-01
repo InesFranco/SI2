@@ -1,5 +1,124 @@
 USE Project1
 GO
+
+
+--d)
+
+--insert
+
+CREATE PROCEDURE p_inserirFuncionario
+    (
+        @numero_identificacao int,
+        @nome varchar(50),
+        @data_nascimento date,
+        @endereco varchar(50),
+        @profissao varchar(20),
+        @telefone int,
+        @email varchar(50)
+    )
+as
+    begin
+        insert into funcionario
+        values(@numero_identificacao, @nome, @data_nascimento, @endereco, @profissao, @telefone, @email)
+    end
+
+exec p_inserirFuncionario 4444, 'júlio', '1997-04-22', 'rua marinheiro','engenheiro', 927272727, 'jl@hotmail.com'
+drop procedure p_inserirFuncionario
+
+
+
+--delete
+
+CREATE PROCEDURE p_removerFuncionario(@id_funcionario int)
+as
+    begin
+        --delete from competencia_funcionario table
+        delete from funcionario_competencia
+        where id_funcionario = @id_funcionario
+
+        --delete from team
+        DECLARE @equipa_cursor CURSOR;
+        DECLARE @equipa_id int;
+        BEGIN
+        SET @equipa_cursor = CURSOR FOR
+        select codigo_equipa from funcionario_equipa
+        where id_funcionario = @id_funcionario
+
+        OPEN @equipa_cursor
+        FETCH NEXT FROM @equipa_cursor
+        INTO @equipa_id
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            exec p_removerElementoEquipa @equipa_id, @id_funcionario
+        FETCH NEXT FROM @equipa_cursor
+        INTO @equipa_id
+        END;
+
+        CLOSE @equipa_cursor;
+        DEALLOCATE @equipa_cursor;
+        END;
+
+        --remove activo_gerente table entry
+        delete from activo_gerente
+        where id_gerente = @id_funcionario
+
+        --finally delete funcionario table entry
+        delete from funcionario
+        where id_funcionario = @id_funcionario
+
+end
+
+
+exec p_removerFuncionario 1
+drop procedure p_removerFuncionario
+
+--update
+
+create procedure p_actualizaInformacaoFuncionario
+    (
+        @id_funcionario int,
+        @endereco varchar(50) = NULL,
+        @profissao varchar(20) = NULL,
+        @telefone int = NULL,
+        @email varchar(50) = NULL
+    )
+as
+    begin
+        if(@endereco is not NULL)
+            begin
+                update funcionario
+                set endereco = @endereco
+                where id_funcionario = @id_funcionario
+            end
+        if(@profissao is not NULL)
+            begin
+                update funcionario
+                set profissao = @profissao
+                where id_funcionario = @id_funcionario
+            end
+        if(@telefone is not NULL)
+            begin
+                update funcionario
+                set telefone = @telefone
+                where id_funcionario = @id_funcionario
+            end
+        if(@email is not NULL)
+            begin
+                update funcionario
+                set email = @email
+                where id_funcionario = @id_funcionario
+            end
+end
+
+exec p_actualizaInformacaoFuncionario @id_funcionario = 2, @telefone = 92000000
+drop procedure p_actualizaInformacaoFuncionario
+ --d até aqui
+
+
+
+
+
 --f)Criar o procedimento p_criaInter que permite criar uma intervenção;
 
 Create Procedure p_criaIntervencao
@@ -74,21 +193,22 @@ drop procedure p_adicionarElementoEquipa
 --i)
 create function f_listIntervention
     (@id_intervencao INT,
-    @date date
-    )
-
+    @year int)
+    returns table
     as
-        begin
-            select id_intervencao, descricao from intervencao where @date = year(data_inicio)
-
-            and
-                id_intervencao = @id_intervencao
-                date_inicio = @date)
-        end
-
+    return
+            select id_intervencao,
+                   descricao
+            from intervencao
+            where @year = year(data_inicio)
+            and id_intervencao = @id_intervencao
 
 
-exec  f_listIntervention
+drop function f_listIntervention
+
+select * from f_listIntervention (1, '2021')
+
+
 
 
 
