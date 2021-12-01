@@ -71,6 +71,26 @@ exec p_adicionarElementoEquipa 1, 1
 drop procedure p_adicionarElementoEquipa
 
 
+--i)
+create function f_listIntervention
+    (@id_intervencao INT,
+    @date date
+    )
+
+    as
+        begin
+            select id_intervencao, descricao from intervencao where @date = year(data_inicio)
+
+            and
+                id_intervencao = @id_intervencao
+                date_inicio = @date)
+        end
+
+
+
+exec  f_listIntervention
+
+
 
 --eliminates team and marks every intervention associated with this team as "por atribuir"
 create procedure p_eliminarEquipa (@id_equipa int)
