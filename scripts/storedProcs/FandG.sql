@@ -116,7 +116,8 @@ drop procedure p_actualizaInformacaoFuncionario
  --d até aqui
 
 --e
-Create Procedure p_encontrarEquipaParaIntervencao(@id_intervencao int)
+Create function p_encontrarEquipaParaIntervencao(@id_intervencao int)
+            returns int
 as
 begin
     declare @competenciaNecessaria varchar(50)
@@ -124,40 +125,45 @@ begin
 
     --procurar equipas que nao tenham mais de 3 intervencoes atribuidas e que tenham as competencias
 
-        begin
-        DECLARE @equipa_cursor CURSOR;
-        DECLARE @equipa int;
-        BEGIN
-        SET @equipa_cursor = CURSOR FOR
-        select codigo_equipa from IntervencoesPorEquipa
-        where intervencoes_atribuidas < 3
+    declare @equipasValidas table(codigo_equipa int primary key )
 
-        OPEN @equipa_cursor
-        FETCH NEXT FROM @equipa_cursor
-        INTO @equipa
+    declare @RowCount int
+    select @RowCount = max(codigo_equipa) from equipa
 
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            if dbo.verificarCompetenciasEquipa(@equipa, @competenciaNecessaria ) = 1
-                begin
-                    select * into #equipasValidas from equipa where codigo_equipa = @equipa
-                end
-        FETCH NEXT FROM @equipa_cursor
-        INTO @equipa
-        END;
+    declare @EquipaID int = 1
+    while @EquipaID <= @RowCount
+    begin
 
-        CLOSE @equipa_cursor;
-        DEALLOCATE @equipa_cursor;
-        end
+        if exists(select codigo_equipa
+            from equipa
+            where codigo_equipa = @EquipaID)
+            begin
+                if dbo.verificarCompetenciasEquipa(@EquipaID, @competenciaNecessaria ) = 1
+                    begin
+                        insert into @equipasValidas select codigo_equipa from equipa where codigo_equipa = @EquipaID
+                    end
 
+            end
+        set @EquipaID += 1
 
-    end
          --check latest intervention
-
     end
 
+    declare @EarliestDate date
+    select @EarliestDate = min(data_inicio) from intervencao_equipa
 
+    declare @codigoFinal int
+    select @codigoFinal=codigo_equipa from @equipasValidas where codigo_equipa in(
+            select codigo_equipa from intervencao_equipa where data_inicio = @EarliestDate
+        )
 
+    declare @test int
+    select @test= count(*) from @equipasValidas
+    return @codigoFinal
+end
+
+select  dbo.p_encontrarEquipaParaIntervencao (1)
+drop function p_encontrarEquipaParaIntervencao
 
 
 --create view with the team id, element number and number of interventions already attributed
@@ -173,7 +179,7 @@ Create view IntervencoesPorEquipa
         )
     GROUP BY ie.codigo_equipa, e.num_elems
 
-
+select * from IntervencoesPorEquipa
 
 
 create function verificarCompetenciasEquipa
@@ -184,75 +190,45 @@ create function verificarCompetenciasEquipa
     returns bit
 as
     begin
-        DECLARE @funcionario_cursor CURSOR;
-        DECLARE @funcionario int;
-        BEGIN
-        SET @funcionario_cursor = CURSOR FOR
+
+        --verify if number of elemts is at least 2 and if it doesnt already have 3 interventions
+        if (select num_elems from IntervencoesPorEquipa where codigo_equipa = @id_equipa )<2
+            or (select intervencoes_atribuidas from IntervencoesPorEquipa where codigo_equipa = @id_equipa) = 3
+            begin
+                return 0
+            end
+
+        --save just the workers of the specified team
+        declare @funcionarioEquipaX table(id_funcionario int)
+
+        insert into @funcionarioEquipaX
         select id_funcionario from funcionario_equipa
-        where @id_equipa =  @id_equipa
+        where codigo_equipa = @id_equipa
+        --
 
-        OPEN @funcionario_cursor
-        FETCH NEXT FROM @funcionario_cursor
-        INTO @funcionario
+        --get row count
+        declare @rowCounter int
+        select @rowCounter = max(id_funcionario) from funcionario_equipa
 
-        WHILE @@FETCH_STATUS = 0
+        declare @id_funcionario int
+        declare @funcionarioIDCounter int = 1
+
+        while @funcionarioIDCounter <= @rowCounter
         BEGIN
-            if dbo.verificarCompetenciasFuncionario(@funcionario, @competenciaNecessaria) = 1
+            select @id_funcionario = id_funcionario from @funcionarioEquipaX
+            where @funcionarioIDCounter = id_funcionario
+
+            if dbo.verificarCompetenciasFuncionario(@id_funcionario, @competenciaNecessaria) = 1
                 begin
                     return 1
                 end
-        FETCH NEXT FROM @funcionario_cursor
-        INTO @funcionario
-        END;
-
-        CLOSE @funcionario_cursor;
-        DEALLOCATE @funcionario_cursor;
+            set @funcionarioIDCounter += 1
+        end
         return 0
-        END;
     end
 
-
-
-
-
-
---usar selects em vez de cursores(cursor custa muito)
-create function verificarCompetenciasEquipa
-    (
-        @id_equipa int,
-        @competenciaNecessaria varchar(50)
-    )
-    returns bit
-as
-    begin
-        DECLARE @funcionario_cursor CURSOR;
-        DECLARE @funcionario int;
-        BEGIN
-        SET @funcionario_cursor = CURSOR FOR
-        select id_funcionario from funcionario_equipa
-        where @id_equipa =  @id_equipa
-
-        OPEN @funcionario_cursor
-        FETCH NEXT FROM @funcionario_cursor
-        INTO @funcionario
-
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            if dbo.verificarCompetenciasFuncionario(@funcionario, @competenciaNecessaria) = 1
-                begin
-                    return 1
-                end
-        FETCH NEXT FROM @funcionario_cursor
-        INTO @funcionario
-        END;
-
-        CLOSE @funcionario_cursor;
-        DEALLOCATE @funcionario_cursor;
-        return 0
-        END;
-    end
-
-
+select dbo.verificarCompetenciasEquipa(2, 'arranjar piscinas')
+drop function verificarCompetenciasEquipa
 
 
 
@@ -264,15 +240,14 @@ create function verificarCompetenciasFuncionario(
     returns bit
 as
     begin
-
-        declare @descricaoTable table
+        declare @descricaoTabela table
             (
                 id_competencia int primary key,
                 descricao varchar(50)
             )
 
+        insert into @descricaoTabela
         select id_competencia, descricao
-        into @descricaoTable
         from competencia
         where (id_competencia in (
             select id_competencia
@@ -280,21 +255,22 @@ as
             where id_funcionario = @id_funcionario
             )
         )
+
         begin
-            if exists(select *
-                  from @descricaoTable
-                  where @competenciaNecessaria in (select descricao from @descricaoTable))
+             if exists(select *
+                  from @descricaoTabela
+                  where @competenciaNecessaria in (select descricao from @descricaoTabela))
                 begin
                     return 1
                 end
+
         end
         return 0
 end
 
 
-
 drop FUNCTION verificarCompetenciasFuncionario
-select dbo.verificarCompetenciasFuncionario(1,1)
+select dbo.verificarCompetenciasFuncionario(1,'arranjar piscinas')
 
 
 
@@ -391,48 +367,6 @@ select * from f_listIntervention (1, '2021')
 
 
 
---eliminates team and marks every intervention associated with this team as "por atribuir"
-create procedure p_eliminarEquipa (@id_equipa int)
-as
-begin
-    if not exists (select codigo_equipa from equipa where codigo_equipa = @id_equipa)
-    begin
-        RAISERROR (15600,-1,-1, 'p_eliminarEquipa')
-    end
-
-    ---update all intervention status with 'por atribuir'
-    DECLARE @intervencao_cursor CURSOR;
-    DECLARE @intervencao_id int;
-    BEGIN
-    SET @intervencao_cursor = CURSOR FOR
-    select id_intervencao from intervencao_equipa
-    where codigo_equipa = @id_equipa
-
-    OPEN @intervencao_cursor
-    FETCH NEXT FROM @intervencao_cursor
-    INTO @intervencao_id
-
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        exec p_updateInter @intervencao_id, "Por Atribuir"
-    FETCH NEXT FROM @intervencao_cursor
-    INTO @intervencao_id
-    END;
-
-    CLOSE @intervencao_cursor;
-    DEALLOCATE @intervencao_cursor;
-    END;
-
-
-    --delete all table entries with this team
-    delete from funcionario_equipa
-    where (codigo_equipa = @id_equipa)
-
-    delete from equipa
-    where (codigo_equipa = @id_equipa)
-
-end
-
 create procedure p_removerElementoEquipa
     (@id_equipa int,
     @id_funcionario int)
@@ -457,12 +391,7 @@ begin
 
             declare @num_elems int
             set @num_elems = (select num_elems from equipa where codigo_equipa = @id_equipa)
-
-            if(@num_elems = 0)
-                begin
-                    exec p_eliminarEquipa @id_equipa
-                end
-            end
+        end
 end
 
 
