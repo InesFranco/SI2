@@ -174,6 +174,8 @@ Create view IntervencoesPorEquipa
     GROUP BY ie.codigo_equipa, e.num_elems
 
 
+
+
 create function verificarCompetenciasEquipa
     (
         @id_equipa int,
@@ -211,7 +213,50 @@ as
 
 
 
---verifica se o funcionario tem as competencias necessarias
+
+
+
+--usar selects em vez de cursores(cursor custa muito)
+create function verificarCompetenciasEquipa
+    (
+        @id_equipa int,
+        @competenciaNecessaria varchar(50)
+    )
+    returns bit
+as
+    begin
+        DECLARE @funcionario_cursor CURSOR;
+        DECLARE @funcionario int;
+        BEGIN
+        SET @funcionario_cursor = CURSOR FOR
+        select id_funcionario from funcionario_equipa
+        where @id_equipa =  @id_equipa
+
+        OPEN @funcionario_cursor
+        FETCH NEXT FROM @funcionario_cursor
+        INTO @funcionario
+
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            if dbo.verificarCompetenciasFuncionario(@funcionario, @competenciaNecessaria) = 1
+                begin
+                    return 1
+                end
+        FETCH NEXT FROM @funcionario_cursor
+        INTO @funcionario
+        END;
+
+        CLOSE @funcionario_cursor;
+        DEALLOCATE @funcionario_cursor;
+        return 0
+        END;
+    end
+
+
+
+
+
+
 create function verificarCompetenciasFuncionario(
     @id_funcionario int,
     @competenciaNecessaria varchar(50)
@@ -219,30 +264,32 @@ create function verificarCompetenciasFuncionario(
     returns bit
 as
     begin
-        DECLARE @competencia_cursor CURSOR;
-        DECLARE @competencia int;
-        BEGIN
-        SET @competencia_cursor = CURSOR FOR
-        select id_competencia from funcionario_competencia
-        where id_funcionario =  @id_funcionario
 
-        OPEN @competencia_cursor
-        FETCH NEXT FROM @competencia_cursor
-        INTO @competencia
+        declare @descricaoTable table
+            (
+                id_competencia int primary key,
+                descricao varchar(50)
+            )
 
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            if(@competencia like @competenciaNecessaria)
-                return 1
-        FETCH NEXT FROM @competencia_cursor
-        INTO @competencia
-        END;
-
-    CLOSE @competencia_cursor;
-    DEALLOCATE @competencia_cursor;
-    END;
-    return 0
-    end
+        select id_competencia, descricao
+        into @descricaoTable
+        from competencia
+        where (id_competencia in (
+            select id_competencia
+            from funcionario_competencia
+            where id_funcionario = @id_funcionario
+            )
+        )
+        begin
+            if exists(select *
+                  from @descricaoTable
+                  where @competenciaNecessaria in (select descricao from @descricaoTable))
+                begin
+                    return 1
+                end
+        end
+        return 0
+end
 
 
 
