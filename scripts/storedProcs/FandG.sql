@@ -3,7 +3,6 @@ GO
 
 
 --d)
-
 --insert funcionario
 CREATE PROCEDURE p_inserirFuncionario
     (
@@ -16,7 +15,7 @@ CREATE PROCEDURE p_inserirFuncionario
         @email varchar(50)
     )
 as
-    SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
     begin
         insert into funcionario
         values(@numero_identificacao, @nome, @data_nascimento, @endereco, @profissao, @telefone, @email)
@@ -77,7 +76,7 @@ create procedure p_actualizaInformacaoFuncionario
     )
 
 as
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRAN
     begin
         if(@endereco is not NULL)
@@ -129,7 +128,6 @@ begin
     declare @EquipaID int = 1
     while @EquipaID <= @RowCount
     begin
-
         if exists(select codigo_equipa
             from equipa
             where codigo_equipa = @EquipaID)
@@ -138,13 +136,11 @@ begin
                     begin
                         insert into @equipasValidas select codigo_equipa from equipa where codigo_equipa = @EquipaID
                     end
-
             end
         set @EquipaID += 1
-
-         --check earliest intervention
     end
 
+    --check earliest intervention
     declare @EarliestDate date
     select @EarliestDate = min(data_inicio) from intervencao_equipa
 
@@ -265,10 +261,9 @@ end
 drop FUNCTION verificarCompetenciasFuncionario
 select dbo.verificarCompetenciasFuncionario(1,'arranjar piscinas')
 
+--e) ends here
 
-
---f)Criar o procedimento p_criaInter que permite criar uma intervenção;
-
+--f)procedimento p_criaIntervencao que permite criar uma intervenção;
 Create Procedure p_criaIntervencao
     (@id_activo INT,
     @descricao VARCHAR(50),
@@ -289,8 +284,8 @@ COMMIT TRAN
 exec p_criaIntervencao 5, "arranjo", "concluido", 6.66, '2021/06/06', '2021/06/10'
 drop procedure p_criaIntervencao
 
---g)Implementar o mecanismo que permite criar uma equipa;
 
+--g)Implementar o mecanismo que permite criar uma equipa;
 create procedure p_criaEquipa
     (@localizacao VARCHAR(50),
     @id_supervisor int)
@@ -326,32 +321,8 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
     end
 COMMIT TRAN
 
-
 exec p_adicionarElementoEquipa 1, 1
 drop procedure p_adicionarElementoEquipa
-
-
---i)
-create function f_listIntervention
-    (@id_intervencao INT,
-    @year int)
-    returns table
-as
-    return
-    select id_intervencao,descricao
-    from intervencao
-    where @year = year(data_inicio)
-    and id_intervencao = @id_intervencao
-
-
-
-
-drop function f_listIntervention
-
-select * from f_listIntervention (1, '2021')
-
-
-
 
 
 create procedure p_removerElementoEquipa
@@ -369,9 +340,9 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
     end
 COMMIT TRAN
 
-
 exec p_removerElementoEquipa  1, 2
 drop procedure p_removerElementoEquipa
+
 
 --adiciona competencias de um funcionario na tabela funcionario_competencia
 create procedure p_adicionarCompetencias
@@ -387,7 +358,25 @@ COMMIT TRAN
 exec p_adicionarCompetencias 4, 1
 drop procedure p_adicionarCompetencias
 
-----------------------------h) until here-----------------------------
+--h ends here
+
+--i)
+create function f_listIntervention
+    (@id_intervencao INT,
+    @year int)
+    returns table
+as
+    return
+    select id_intervencao,descricao
+    from intervencao
+    where @year = year(data_inicio)
+    and id_intervencao = @id_intervencao
+
+
+drop function f_listIntervention
+select * from f_listIntervention (1, '2021')
+
+
 
 
 --J  Actualizar o estado de uma intervenção;
@@ -404,9 +393,6 @@ end
 
 drop procedure p_updateInter
 exec p_updateInter 1, "concluido"
-
-
-
 
 --k)
 
