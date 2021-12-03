@@ -4,8 +4,7 @@ GO
 
 --d)
 
---insert
-
+--insert funcionario
 CREATE PROCEDURE p_inserirFuncionario
     (
         @numero_identificacao int,
@@ -17,47 +16,41 @@ CREATE PROCEDURE p_inserirFuncionario
         @email varchar(50)
     )
 as
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED
     begin
         insert into funcionario
         values(@numero_identificacao, @nome, @data_nascimento, @endereco, @profissao, @telefone, @email)
     end
+    COMMIT TRAN
 
 exec p_inserirFuncionario 4444, 'júlio', '1997-04-22', 'rua marinheiro','engenheiro', 927272727, 'jl@hotmail.com'
 drop procedure p_inserirFuncionario
 
 
 
---delete
-
+--delete funcionario
 CREATE PROCEDURE p_removerFuncionario(@id_funcionario int)
+
 as
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRAN
     begin
         --delete from competencia_funcionario table
         delete from funcionario_competencia
         where id_funcionario = @id_funcionario
 
         --delete from team
-        DECLARE @equipa_cursor CURSOR;
-        DECLARE @equipa_id int;
-        BEGIN
-        SET @equipa_cursor = CURSOR FOR
-        select codigo_equipa from funcionario_equipa
-        where id_funcionario = @id_funcionario
+        declare @rowcount int = (select max(codigo_equipa) from funcionario_equipa where id_funcionario = @id_funcionario)
+        declare @equipa_id int = 1
 
-        OPEN @equipa_cursor
-        FETCH NEXT FROM @equipa_cursor
-        INTO @equipa_id
-
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            exec p_removerElementoEquipa @equipa_id, @id_funcionario
-        FETCH NEXT FROM @equipa_cursor
-        INTO @equipa_id
-        END;
-
-        CLOSE @equipa_cursor;
-        DEALLOCATE @equipa_cursor;
-        END;
+        while @equipa_id <= @rowcount
+        begin
+            if(@equipa_id in (select codigo_equipa from funcionario_equipa where id_funcionario = @id_funcionario))
+                begin
+                    exec p_removerElementoEquipa @equipa_id, @id_funcionario
+                end
+            set @equipa_id += 1
+        end
 
         --remove activo_gerente table entry
         delete from activo_gerente
@@ -67,14 +60,13 @@ as
         delete from funcionario
         where id_funcionario = @id_funcionario
 
-end
-
+    end
+COMMIT TRAN
 
 exec p_removerFuncionario 1
 drop procedure p_removerFuncionario
 
---update
-
+--update data from funcionario
 create procedure p_actualizaInformacaoFuncionario
     (
         @id_funcionario int,
@@ -83,7 +75,10 @@ create procedure p_actualizaInformacaoFuncionario
         @telefone int = NULL,
         @email varchar(50) = NULL
     )
+
 as
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRAN
     begin
         if(@endereco is not NULL)
             begin
@@ -109,13 +104,14 @@ as
                 set email = @email
                 where id_funcionario = @id_funcionario
             end
-end
+    end
+COMMIT TRAN
 
 exec p_actualizaInformacaoFuncionario @id_funcionario = 2, @telefone = 92000000
 drop procedure p_actualizaInformacaoFuncionario
- --d até aqui
+--d acaba aqui
 
---e
+--e)
 Create function p_encontrarEquipaParaIntervencao(@id_intervencao int)
             returns int
 as
@@ -146,7 +142,7 @@ begin
             end
         set @EquipaID += 1
 
-         --check latest intervention
+         --check earliest intervention
     end
 
     declare @EarliestDate date
@@ -239,7 +235,7 @@ create function verificarCompetenciasFuncionario(
     )
     returns bit
 as
-    begin
+begin
         declare @descricaoTabela table
             (
                 id_competencia int primary key,
@@ -256,15 +252,12 @@ as
             )
         )
 
-        begin
-             if exists(select *
-                  from @descricaoTabela
-                  where @competenciaNecessaria in (select descricao from @descricaoTabela))
-                begin
-                    return 1
-                end
-
-        end
+        if exists(select *
+          from @descricaoTabela
+          where @competenciaNecessaria in (select descricao from @descricaoTabela))
+            begin
+                return 1
+            end
         return 0
 end
 
@@ -285,12 +278,13 @@ Create Procedure p_criaIntervencao
     @data_fim DATE)
 
 AS
-Begin
-    begin
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRAN
+    Begin
         Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
         values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
     end
-end
+COMMIT TRAN
 
 exec p_criaIntervencao 5, "arranjo", "concluido", 6.66, '2021/06/06', '2021/06/10'
 drop procedure p_criaIntervencao
@@ -301,16 +295,13 @@ create procedure p_criaEquipa
     (@localizacao VARCHAR(50),
     @id_supervisor int)
 as
-begin
-    if not exists (select id_funcionario from funcionario where id_funcionario = @id_supervisor)
-        begin
-            RAISERROR (15600,-1,-1, 'p_criaEquipa');
-        end
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
     begin
         insert into equipa (localizacao, num_elems, id_supervisor)
         values (@localizacao, 1, @id_supervisor)
+
     end
-end
+COMMIT TRAN
 
 exec p_criaEquipa "Armazém", 5, 15
 drop procedure p_criaEquipa
@@ -324,21 +315,16 @@ create procedure p_adicionarElementoEquipa
     (@id_equipa int,
     @id_funcionario int)
 as
-begin
-    if not exists (select id_funcionario from funcionario where id_funcionario = @id_funcionario)
-    or
-    not exists (select codigo_equipa from equipa where codigo_equipa = @id_equipa)
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
     begin
-        RAISERROR (15600,-1,-1, 'p_adicionarElementoEquipa');
+        insert into funcionario_equipa
+        values (@id_funcionario, @id_equipa)
+
+        update equipa
+        set num_elems = num_elems + 1
+        where codigo_equipa = @id_equipa
     end
-
-    update equipa
-    set num_elems = num_elems + 1
-    where codigo_equipa = @id_equipa
-
-    insert into funcionario_equipa
-    values (@id_funcionario, @id_equipa)
-end
+COMMIT TRAN
 
 
 exec p_adicionarElementoEquipa 1, 1
@@ -350,13 +336,14 @@ create function f_listIntervention
     (@id_intervencao INT,
     @year int)
     returns table
-    as
+as
     return
-            select id_intervencao,
-                   descricao
-            from intervencao
-            where @year = year(data_inicio)
-            and id_intervencao = @id_intervencao
+    select id_intervencao,descricao
+    from intervencao
+    where @year = year(data_inicio)
+    and id_intervencao = @id_intervencao
+
+
 
 
 drop function f_listIntervention
@@ -371,28 +358,16 @@ create procedure p_removerElementoEquipa
     (@id_equipa int,
     @id_funcionario int)
 as
-begin
-
-    if not exists (select id_funcionario from funcionario where id_funcionario = @id_funcionario)
-    or
-    not exists (select codigo_equipa from equipa where codigo_equipa = @id_equipa)
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
     begin
-        RAISERROR (15600,-1,-1, 'p_removerElementoEquipa');
+        delete from funcionario_equipa
+        where (id_funcionario = @id_funcionario and @id_equipa = codigo_equipa)
+
+        update equipa
+        set num_elems = num_elems - 1
+        where codigo_equipa = @id_equipa
     end
-
-    if exists (select id_funcionario,codigo_equipa from funcionario_equipa where id_funcionario = @id_funcionario and @id_equipa = codigo_equipa)
-        begin
-            delete from funcionario_equipa
-            where (id_funcionario = @id_funcionario and @id_equipa = codigo_equipa)
-
-            update equipa
-            set num_elems = num_elems - 1
-            where codigo_equipa = @id_equipa
-
-            declare @num_elems int
-            set @num_elems = (select num_elems from equipa where codigo_equipa = @id_equipa)
-        end
-end
+COMMIT TRAN
 
 
 exec p_removerElementoEquipa  1, 2
@@ -403,16 +378,11 @@ create procedure p_adicionarCompetencias
     (@id_funcionario int,
     @id_competencia int)
 as
-begin
-    if not exists (select id_funcionario from funcionario where id_funcionario = @id_funcionario)
-    or
-    not exists (select id_competencia from competencia where id_competencia = @id_competencia)
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
     begin
-        RAISERROR (15600,-1,-1, 'p_adicionarCompetencias')
+        insert into funcionario_competencia values (@id_funcionario, @id_competencia)
     end
-
-    insert into funcionario_competencia values (@id_funcionario, @id_competencia)
-end
+COMMIT TRAN
 
 exec p_adicionarCompetencias 4, 1
 drop procedure p_adicionarCompetencias
@@ -434,3 +404,67 @@ end
 
 drop procedure p_updateInter
 exec p_updateInter 1, "concluido"
+
+
+
+
+--k)
+
+--create view that aggregates data from intervencao and activo
+Create View vw_Resumo_Intervencao
+as
+    select id_intervencao, descricao, i.estado, valor, data_inicio, data_fim, a.nome as nome_activo
+    , a.marca as marca_activo, a.modelo as modelo_activo
+    from intervencao i
+    join activo a on i.id_activo = a.activo_id
+
+drop view vw_Resumo_Intervencao
+
+
+-- create trigger on the view above which, using a cursor, iterates through all the values in the inserted
+--table and updates them
+create trigger trgr_on_resumo on vw_Resumo_Intervencao
+instead of update
+as
+    declare @rc as int
+    set @rc = @@rowcount
+    if @rc = 0 return
+
+    SET NOCOUNT ON
+    if @rc = 1
+        update intervencao
+        set estado = (select estado from inserted)
+        where id_intervencao = (select id_intervencao from inserted)
+    else
+        begin
+            declare @estado varchar(50)
+            declare @id_intervencao int
+
+            declare cursor_intervencao cursor FAST_FORWARD for
+            select id_intervencao, estado from inserted
+            open cursor_intervencao
+
+            fetch next from cursor_intervencao into @id_intervencao,@estado
+            while @@fetch_status = 0
+            begin
+                exec p_updateInter @id_intervencao, @estado
+                fetch next from cursor_intervencao into @id_intervencao, @estado
+            end
+
+            CLOSE cursor_intervencao
+            DEALLOCATE cursor_intervencao
+        end
+
+drop trigger trgr_on_resumo
+
+BEGIN TRAN
+    update vw_Resumo_Intervencao
+    set estado = 'concluido'
+    where id_intervencao = 1
+
+    update vw_Resumo_Intervencao
+    set estado = 'por atribuir'
+    where id_intervencao = 2
+commit tran
+
+--k ends here
