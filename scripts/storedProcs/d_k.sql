@@ -9,7 +9,7 @@ drop procedure if exists p_removerFuncionario
 drop procedure if exists p_actualizaInformacaoFuncionario
 drop FUNCTION if exists verificarCompetenciasFuncionario
 drop function if exists verificarCompetenciasEquipa
-drop function if exists p_encontrarEquipaParaIntervencao
+drop function if exists encontrarEquipaParaIntervencao
 drop procedure if exists p_criaIntervencao
 drop procedure if exists p_criaEquipa
 drop function if exists f_listInterventionsOfYear
@@ -27,12 +27,16 @@ create procedure p_adicionarElementoEquipa
 as
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRAN
-    insert into funcionario_equipa
-    values (@id_funcionario, @id_equipa)
+    --cada funcionario so pode pertencer a uma equipa
+    if not exists (select id_funcionario from funcionario_equipa where id_funcionario = @id_funcionario)
+        begin
+            insert into funcionario_equipa
+            values (@id_funcionario, @id_equipa)
 
-    update equipa
-    set num_elems = num_elems + 1
-    where codigo_equipa = @id_equipa
+            update equipa
+            set num_elems = num_elems + 1
+            where codigo_equipa = @id_equipa
+        end
 COMMIT TRAN
 
 go
@@ -60,7 +64,7 @@ create procedure p_adicionarCompetencias
     (@id_funcionario int,
     @id_competencia int)
 as
-SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
     begin
         insert into funcionario_competencia values (@id_funcionario, @id_competencia)
     end
@@ -97,7 +101,7 @@ go
 CREATE PROCEDURE p_removerFuncionario(@id_funcionario int)
 
 as
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRAN
     begin
         --delete from competencia_funcionario table
@@ -277,7 +281,7 @@ as
     end
 GO
 --
-Create function p_encontrarEquipaParaIntervencao(@id_intervencao int)
+Create function encontrarEquipaParaIntervencao(@id_intervencao int)
             returns int
 as
 begin
@@ -333,13 +337,20 @@ Create Procedure p_criaIntervencao
     @data_fim DATE)
 
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
 BEGIN TRAN
 
     DECLARE @estado varchar(30)
     set @estado = 'por atribuir'
 
-    if(@data_inicio < @data_fim)
+    DECLARE @data_obtencao_activo date
+    select @data_obtencao_activo = data_aquisicao from activo where @id_activo = @id_activo
+    if(@data_obtencao_activo > @data_inicio)
+        begin
+            print('Data de obtenção do activo superior à de inicio de intervenção')
+            return;
+        end
+    if(@data_inicio < @data_fim )
         begin
             Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
             values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
@@ -358,19 +369,19 @@ create procedure p_criaEquipa
     (@localizacao VARCHAR(50),
     @id_supervisor int)
 as
-    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-    BEGIN TRAN
-        begin
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+BEGIN TRAN
+    begin
 
-            insert into equipa (localizacao, num_elems, id_supervisor)
-            values (@localizacao, 1, @id_supervisor)
+        insert into equipa (localizacao, num_elems, id_supervisor)
+        values (@localizacao, 1, @id_supervisor)
 
-            --adicionar a tablea funcionario equipa
-            declare @codigo_equipa int
-            set @codigo_equipa = (select max(codigo_equipa) from equipa)
-            insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
-        end
-    COMMIT TRAN
+        --adicionar a tablea funcionario equipa
+        declare @codigo_equipa int
+        set @codigo_equipa = (select max(codigo_equipa) from equipa)
+        insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
+    end
+COMMIT TRAN
 GO
 --
 
@@ -393,11 +404,12 @@ Create Procedure p_updateInter(
         @id_intervencao int,
         @estado VARCHAR(50))
 as
-begin
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+BEGIN TRAN
     update intervencao
     set	estado = @estado
     where id_intervencao = @id_intervencao
-end
+COMMIT TRAN
 --
 GO
 

@@ -47,7 +47,6 @@ BEGIN TRAN
     INSERT INTO funcionario_equipa VALUES(2, 2)
     INSERT INTO funcionario_equipa VALUES(2, 1)
     INSERT INTO funcionario_equipa VALUES(3, 2)
-    INSERT INTO funcionario_equipa VALUES(4, 1)
 
     INSERT INTO intervencao VALUES(1,'arranjar piscinas', 'por atribuir', 200, '2021-04-30','2021-05-01')
     INSERT INTO intervencao VALUES(1,'drenar piscinas', 'concluido', 300, '2021-04-30', '2021-05-05')

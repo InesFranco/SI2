@@ -62,7 +62,7 @@ exec p_actualizaInformacaoFuncionario @id_funcionario = 1, @telefone = @previous
 begin tran
 
 declare @Actual_codigo_equipa int
-set @Actual_codigo_equipa = dbo.p_encontrarEquipaParaIntervencao (1)
+set @Actual_codigo_equipa = dbo.encontrarEquipaParaIntervencao (1)
 
 DECLARE @Expected_codigo_equipa int
 set @Expected_codigo_equipa = 2
@@ -118,7 +118,7 @@ COMMIT TRAN
 
 --------TESTE i
 BEGIN TRAN
-    declare @Expected_row int = 3
+    declare @Expected_row int = 4
     declare @Actual_rowcount int = (select count(*) from f_listInterventionsOfYear(2021))
 
     print('Expected row count: ' + cast(@Expected_row as varchar(20)) +  ' Actual row count: ' + cast(@Actual_rowcount as varchar(20)))
