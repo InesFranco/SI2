@@ -24,10 +24,7 @@ BEGIN TRAN
     INSERT INTO funcionario VALUES(6666, 'Elizabeth Fraser', '1967-04-22', 'rua sao pedro', 'oficial das piscinas', 928181727, 'mccool@hotmail.com')
     INSERT INTO funcionario VALUES(1111, 'Fiona Apple', '1980-05-31', 'rua sá', 'reparador piscinas', 987878787, 'anc@hotmail.com')
 
-
-
-
-    INSERT INTO activo_gerente VALUES(1, 1)
+    INSERT INTO activo_gerente VALUES(1, 4)
     INSERT INTO activo_gerente VALUES(2, 2)
 
     INSERT INTO activo_preçocomercial VALUES(1, 1997, '2021-10-28')

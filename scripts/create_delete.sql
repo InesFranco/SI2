@@ -37,8 +37,6 @@ IF OBJECT_ID('tipo_activo') IS NOT NULL
 -----------------------------------CREATE-------------------------------
 
 
-
-
 CREATE TABLE tipo_activo(
     id_tipo INT IDENTITY(1,1) PRIMARY KEY,
     description VARCHAR(50)

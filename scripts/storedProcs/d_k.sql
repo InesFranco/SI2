@@ -1,6 +1,76 @@
 USE Project1
 GO
 
+drop procedure if exists p_adicionarElementoEquipa
+drop procedure if exists p_removerElementoEquipa
+drop procedure if exists p_adicionarCompetencias
+drop procedure if exists p_inserirFuncionario
+drop procedure if exists p_removerFuncionario
+drop procedure if exists p_actualizaInformacaoFuncionario
+drop FUNCTION if exists verificarCompetenciasFuncionario
+drop function if exists verificarCompetenciasEquipa
+drop function if exists p_encontrarEquipaParaIntervencao
+drop procedure if exists p_criaIntervencao
+drop procedure if exists p_criaEquipa
+drop function if exists f_listInterventionsOfYear
+drop procedure if exists p_updateInter
+drop trigger if exists trgr_on_resumo
+drop view if exists IntervencoesPorEquipa
+drop view if exists vw_Resumo_Intervencao
+
+--h)Actualizar (adicionar ou remover) os elementos de uma equipa e associar as respectivas
+--competências
+GO
+create procedure p_adicionarElementoEquipa
+    (@id_equipa int,
+    @id_funcionario int)
+as
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+BEGIN TRAN
+    insert into funcionario_equipa
+    values (@id_funcionario, @id_equipa)
+
+    update equipa
+    set num_elems = num_elems + 1
+    where codigo_equipa = @id_equipa
+COMMIT TRAN
+
+go
+create procedure p_removerElementoEquipa
+    (@id_equipa int,
+    @id_funcionario int)
+as
+begin
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+    BEGIN TRAN
+        delete from funcionario_equipa
+        where (id_funcionario = @id_funcionario and @id_equipa = codigo_equipa)
+
+        update equipa
+        set num_elems = num_elems - 1
+        where codigo_equipa = @id_equipa
+    COMMIT TRAN
+end
+
+GO
+
+
+--adiciona competencias de um funcionario na tabela funcionario_competencia
+create procedure p_adicionarCompetencias
+    (@id_funcionario int,
+    @id_competencia int)
+as
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+    begin
+        insert into funcionario_competencia values (@id_funcionario, @id_competencia)
+    end
+COMMIT TRAN
+--h ends here
+
+
+go
+
+
 
 --d)
 --insert funcionario
@@ -15,17 +85,13 @@ CREATE PROCEDURE p_inserirFuncionario
         @email varchar(50)
     )
 as
-    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-    begin
-        insert into funcionario
-        values(@numero_identificacao, @nome, @data_nascimento, @endereco, @profissao, @telefone, @email)
-    end
-    COMMIT TRAN
-
-exec p_inserirFuncionario 4444, 'júlio', '1997-04-22', 'rua marinheiro','engenheiro', 927272727, 'jl@hotmail.com'
-drop procedure p_inserirFuncionario
-
-
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+begin transaction
+    insert into funcionario
+    values(@numero_identificacao, @nome, @data_nascimento, @endereco, @profissao, @telefone, @email)
+COMMIT TRAN
+go
+--
 
 --delete funcionario
 CREATE PROCEDURE p_removerFuncionario(@id_funcionario int)
@@ -61,9 +127,8 @@ BEGIN TRAN
 
     end
 COMMIT TRAN
-
-exec p_removerFuncionario 1
-drop procedure p_removerFuncionario
+GO
+--
 
 --update data from funcionario
 create procedure p_actualizaInformacaoFuncionario
@@ -105,58 +170,11 @@ BEGIN TRAN
             end
     end
 COMMIT TRAN
-
-exec p_actualizaInformacaoFuncionario @id_funcionario = 2, @telefone = 92000000
-drop procedure p_actualizaInformacaoFuncionario
+--
+GO
 --d acaba aqui
 
 --e)
-Create function p_encontrarEquipaParaIntervencao(@id_intervencao int)
-            returns int
-as
-begin
-    declare @competenciaNecessaria varchar(50)
-    set @competenciaNecessaria = (select descricao from intervencao where @id_intervencao = id_intervencao)
-
-    --procurar equipas que nao tenham mais de 3 intervencoes atribuidas e que tenham as competencias
-
-    declare @equipasValidas table(codigo_equipa int primary key )
-
-    declare @RowCount int
-    select @RowCount = max(codigo_equipa) from equipa
-
-    declare @EquipaID int = 1
-    while @EquipaID <= @RowCount
-    begin
-        if exists(select codigo_equipa
-            from equipa
-            where codigo_equipa = @EquipaID)
-            begin
-                if dbo.verificarCompetenciasEquipa(@EquipaID, @competenciaNecessaria ) = 1
-                    begin
-                        insert into @equipasValidas select codigo_equipa from equipa where codigo_equipa = @EquipaID
-                    end
-            end
-        set @EquipaID += 1
-    end
-
-    --check earliest intervention
-    declare @EarliestDate date
-    select @EarliestDate = min(data_inicio) from intervencao_equipa
-
-    declare @codigoFinal int
-    select @codigoFinal=codigo_equipa from @equipasValidas where codigo_equipa in(
-            select codigo_equipa from intervencao_equipa where data_inicio = @EarliestDate
-        )
-
-    declare @test int
-    select @test= count(*) from @equipasValidas
-    return @codigoFinal
-end
-
-select  dbo.p_encontrarEquipaParaIntervencao (1)
-drop function p_encontrarEquipaParaIntervencao
-
 
 --create view with the team id, element number and number of interventions already attributed
 Create view IntervencoesPorEquipa
@@ -170,14 +188,49 @@ Create view IntervencoesPorEquipa
         where equipa.codigo_equipa = ie.codigo_equipa) >= 2
         )
     GROUP BY ie.codigo_equipa, e.num_elems
+GO
 
-select * from IntervencoesPorEquipa
 
+create function verificarCompetenciasFuncionario(
+    @id_funcionario int,
+    @competenciaNecessaria varchar(50)
+    )
+    returns bit
+as
+begin
+    declare @descricaoTabela table
+            (
+                id_competencia int primary key,
+                descricao varchar(50)
+            )
+
+    insert into @descricaoTabela
+    select id_competencia, descricao
+    from competencia
+    where (id_competencia in (
+        select id_competencia
+        from funcionario_competencia
+        where id_funcionario = @id_funcionario
+        )
+    )
+
+    if exists(select *
+      from @descricaoTabela
+      where @competenciaNecessaria in (select descricao from @descricaoTabela))
+        begin
+            return 1
+        end
+    return 0
+end
+GO
+
+--
 
 create function verificarCompetenciasEquipa
     (
         @id_equipa int,
-        @competenciaNecessaria varchar(50)
+        @competenciaNecessaria varchar(50),
+        @id_activo int
     )
     returns bit
 as
@@ -210,7 +263,11 @@ as
             select @id_funcionario = id_funcionario from @funcionarioEquipaX
             where @funcionarioIDCounter = id_funcionario
 
-            if dbo.verificarCompetenciasFuncionario(@id_funcionario, @competenciaNecessaria) = 1
+            if
+                --se o funcionario for gerente do activo nao pode participar
+                @id_funcionario not like( select id_gerente from activo_gerente where id_activo = @id_activo)
+            and
+               dbo.verificarCompetenciasFuncionario(@id_funcionario, @competenciaNecessaria) = 1
                 begin
                     return 1
                 end
@@ -218,56 +275,59 @@ as
         end
         return 0
     end
-
-select dbo.verificarCompetenciasEquipa(2, 'arranjar piscinas')
-drop function verificarCompetenciasEquipa
-
-
-
-
-create function verificarCompetenciasFuncionario(
-    @id_funcionario int,
-    @competenciaNecessaria varchar(50)
-    )
-    returns bit
+GO
+--
+Create function p_encontrarEquipaParaIntervencao(@id_intervencao int)
+            returns int
 as
 begin
-        declare @descricaoTabela table
-            (
-                id_competencia int primary key,
-                descricao varchar(50)
-            )
+    declare @competenciaNecessaria varchar(50)
+    set @competenciaNecessaria = (select descricao from intervencao where @id_intervencao = id_intervencao)
 
-        insert into @descricaoTabela
-        select id_competencia, descricao
-        from competencia
-        where (id_competencia in (
-            select id_competencia
-            from funcionario_competencia
-            where id_funcionario = @id_funcionario
-            )
+    declare @id_activo int
+    select @id_activo= id_activo from intervencao where @id_intervencao = id_intervencao
+    --procurar equipas que nao tenham mais de 3 intervencoes atribuidas e que tenham as competencias
+
+
+    declare @equipasValidas table(codigo_equipa int primary key )
+
+    declare @RowCount int
+    select @RowCount = max(codigo_equipa) from equipa
+
+    declare @EquipaID int = 1
+    while @EquipaID <= @RowCount
+    begin
+        if exists(select codigo_equipa
+            from equipa
+            where codigo_equipa = @EquipaID)
+            begin
+                if dbo.verificarCompetenciasEquipa(@EquipaID, @competenciaNecessaria, @id_activo) = 1
+                    begin
+                        insert into @equipasValidas select codigo_equipa from equipa where codigo_equipa = @EquipaID
+                    end
+            end
+        set @EquipaID += 1
+    end
+
+    --check earliest intervention
+    declare @EarliestDate date
+    select @EarliestDate = min(data_inicio) from intervencao_equipa
+
+    declare @codigoFinal int
+    select @codigoFinal=codigo_equipa from @equipasValidas where codigo_equipa in(
+            select codigo_equipa from intervencao_equipa where data_inicio = @EarliestDate
         )
 
-        if exists(select *
-          from @descricaoTabela
-          where @competenciaNecessaria in (select descricao from @descricaoTabela))
-            begin
-                return 1
-            end
-        return 0
+    return @codigoFinal
 end
-
-
-drop FUNCTION verificarCompetenciasFuncionario
-select dbo.verificarCompetenciasFuncionario(1,'arranjar piscinas')
-
+GO
+--
 --e) ends here
 
 --f)procedimento p_criaIntervencao que permite criar uma intervenção;
 Create Procedure p_criaIntervencao
     (@id_activo INT,
     @descricao VARCHAR(50),
-    @estado VARCHAR(50),
     @valor FLOAT,
     @data_inicio DATE,
     @data_fim DATE)
@@ -275,14 +335,22 @@ Create Procedure p_criaIntervencao
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRAN
-    Begin
-        Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
-        values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
-    end
-COMMIT TRAN
 
-exec p_criaIntervencao 5, "arranjo", "concluido", 6.66, '2021/06/06', '2021/06/10'
-drop procedure p_criaIntervencao
+    DECLARE @estado varchar(30)
+    set @estado = 'por atribuir'
+
+    if(@data_inicio < @data_fim)
+        begin
+            Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
+            values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
+        end
+    else
+        begin
+            print('Erro : Data de inicio maior que data de fim')
+        end
+COMMIT TRAN
+GO
+--
 
 
 --g)Implementar o mecanismo que permite criar uma equipa;
@@ -290,112 +358,50 @@ create procedure p_criaEquipa
     (@localizacao VARCHAR(50),
     @id_supervisor int)
 as
-SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-    begin
-        insert into equipa (localizacao, num_elems, id_supervisor)
-        values (@localizacao, 1, @id_supervisor)
+    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+    BEGIN TRAN
+        begin
 
-    end
-COMMIT TRAN
+            insert into equipa (localizacao, num_elems, id_supervisor)
+            values (@localizacao, 1, @id_supervisor)
 
-exec p_criaEquipa "Armazém", 5, 15
-drop procedure p_criaEquipa
-
-
-
---h)Actualizar (adicionar ou remover) os elementos de uma equipa e associar as respectivas
---competências
-
-create procedure p_adicionarElementoEquipa
-    (@id_equipa int,
-    @id_funcionario int)
-as
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-    begin
-        insert into funcionario_equipa
-        values (@id_funcionario, @id_equipa)
-
-        update equipa
-        set num_elems = num_elems + 1
-        where codigo_equipa = @id_equipa
-    end
-COMMIT TRAN
-
-exec p_adicionarElementoEquipa 1, 1
-drop procedure p_adicionarElementoEquipa
+            --adicionar a tablea funcionario equipa
+            declare @codigo_equipa int
+            set @codigo_equipa = (select max(codigo_equipa) from equipa)
+            insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
+        end
+    COMMIT TRAN
+GO
+--
 
 
-create procedure p_removerElementoEquipa
-    (@id_equipa int,
-    @id_funcionario int)
-as
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-    begin
-        delete from funcionario_equipa
-        where (id_funcionario = @id_funcionario and @id_equipa = codigo_equipa)
-
-        update equipa
-        set num_elems = num_elems - 1
-        where codigo_equipa = @id_equipa
-    end
-COMMIT TRAN
-
-exec p_removerElementoEquipa  1, 2
-drop procedure p_removerElementoEquipa
-
-
---adiciona competencias de um funcionario na tabela funcionario_competencia
-create procedure p_adicionarCompetencias
-    (@id_funcionario int,
-    @id_competencia int)
-as
-SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-    begin
-        insert into funcionario_competencia values (@id_funcionario, @id_competencia)
-    end
-COMMIT TRAN
-
-exec p_adicionarCompetencias 4, 1
-drop procedure p_adicionarCompetencias
-
---h ends here
 
 --i)
-create function f_listIntervention
-    (@id_intervencao INT,
-    @year int)
+create function f_listInterventionsOfYear(@ano int)
     returns table
 as
-    return
+return
     select id_intervencao,descricao
     from intervencao
-    where @year = year(data_inicio)
-    and id_intervencao = @id_intervencao
+    where @ano = year(data_inicio)
+GO
 
-
-drop function f_listIntervention
-select * from f_listIntervention (1, '2021')
-
-
-
+--
 
 --J  Actualizar o estado de uma intervenção;
 Create Procedure p_updateInter(
         @id_intervencao int,
         @estado VARCHAR(50))
-AS
+as
 begin
     update intervencao
     set	estado = @estado
     where id_intervencao = @id_intervencao
 end
-
-
-drop procedure p_updateInter
-exec p_updateInter 1, "concluido"
+--
+GO
 
 --k)
-
 --create view that aggregates data from intervencao and activo
 Create View vw_Resumo_Intervencao
 as
@@ -404,7 +410,7 @@ as
     from intervencao i
     join activo a on i.id_activo = a.activo_id
 
-drop view vw_Resumo_Intervencao
+GO
 
 
 -- create trigger on the view above which, using a cursor, iterates through all the values in the inserted
@@ -440,17 +446,4 @@ as
             CLOSE cursor_intervencao
             DEALLOCATE cursor_intervencao
         end
-
-drop trigger trgr_on_resumo
-
-BEGIN TRAN
-    update vw_Resumo_Intervencao
-    set estado = 'concluido'
-    where id_intervencao = 1
-
-    update vw_Resumo_Intervencao
-    set estado = 'por atribuir'
-    where id_intervencao = 2
-commit tran
-
 --k ends here
