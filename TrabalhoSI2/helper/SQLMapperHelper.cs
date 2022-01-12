@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrabalhoSI2.dal;
 
 namespace TrabalhoSI2.helper
 {
@@ -13,19 +14,17 @@ namespace TrabalhoSI2.helper
 
         //Delegate to MAP an entity from a row
         public delegate T Mapper<T>(IDataRecord data);
-        public static int ExecuteNonQuery(string connectionString, string cmdtxt, IDbDataParameter[] dbDataParameters)
+        public static int ExecuteNonQuery(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = ctx.createCommand())
             {
-                using (SqlCommand cmd = con.CreateCommand())
-                {
-                    cmd.CommandText = cmdtxt;
-                    cmd.Parameters.AddRange(dbDataParameters);
-                    con.Open();
-                    return cmd.ExecuteNonQuery();
-                }
+                cmd.CommandText = cmdtxt;
+                cmd.Parameters.AddRange(dbDataParameters);
+                ctx.Open();
+                return cmd.ExecuteNonQuery();
             }
         }
+        
 
         public static T ExecuteScalar<T>(string connectionString, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
