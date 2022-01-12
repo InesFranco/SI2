@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrabalhoSI2.concrete;
 using TrabalhoSI2.dal;
 
 namespace TrabalhoSI2.helper
@@ -20,23 +22,18 @@ namespace TrabalhoSI2.helper
             {
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                ctx.Open();
                 return cmd.ExecuteNonQuery();
             }
         }
         
 
-        public static T ExecuteScalar<T>(string connectionString, string cmdtxt, IDbDataParameter[] dbDataParameters)
+        public static T ExecuteScalar<T>(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlCommand cmd = ctx.createCommand())
             {
-                using (SqlCommand cmd = con.CreateCommand())
-                {
-                    cmd.CommandText = cmdtxt;
-                    cmd.Parameters.AddRange(dbDataParameters);
-                    con.Open();
-                    return (T)cmd.ExecuteScalar();
-                }
+                cmd.CommandText = cmdtxt;
+                cmd.Parameters.AddRange(dbDataParameters);
+                return (T)cmd.ExecuteScalar();
             }
         }
 
@@ -69,6 +66,7 @@ namespace TrabalhoSI2.helper
             throw new System.NotImplementedException();
         }
 
-        }
+        
     }
 }
+

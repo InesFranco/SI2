@@ -2,7 +2,7 @@
 
 namespace TrabalhoSI2.dal
 {
-    internal interface IContext : IDisposable
+    public interface IContext : IDisposable
     {
         void Open();
         SqlCommand createCommand();

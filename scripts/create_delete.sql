@@ -7,6 +7,17 @@ IF (DB_ID('Project1') IS NULL)
 
 GO
 USE Project1;
+IF NOT EXISTS
+    (SELECT name from sys.database_principals where name = 'User2')
+begin
+    CREATE LOGIN User2
+    WITH PASSWORD = 'user2pwd', CHECK_EXPIRATION = OFF, CHECK_POLICY = OFF;
+    CREATE USER User2 FOR LOGIN User2
+    WITH DEFAULT_SCHEMA = dbo;
+end
+GO
+EXEC sp_addrolemember 'db_owner', 'User2';
+
 
 ----------------------------DROP------------------------------------------------
 IF OBJECT_ID('intervencao_equipa') IS NOT NULL

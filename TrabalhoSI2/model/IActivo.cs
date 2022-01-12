@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TrabalhoSI2.model
 {
-    internal interface IActivo
+    public interface IActivo
     {
         int? activo_id { get; set; }
         string nome { get; set; }

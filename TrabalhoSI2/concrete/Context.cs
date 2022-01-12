@@ -9,7 +9,7 @@ using TrabalhoSI2.dal;
 
 namespace TrabalhoSI2.concrete
 {
-    internal class Context : IContext
+    public class Context : IContext
     {
         private string connectionString;
         private SqlConnection con = null;
@@ -32,7 +32,7 @@ namespace TrabalhoSI2.concrete
 
         public SqlCommand createCommand()
         {
-            con.Open();
+            Open();
             return con.CreateCommand();
         }
 
@@ -40,7 +40,7 @@ namespace TrabalhoSI2.concrete
         {
             if (con != null)
             {
-                con.Close();
+                con.Dispose();
                 con = null;
             }
         }
