@@ -9,7 +9,7 @@ namespace TrabalhoSI2.mapper
     public interface IMapper<T,Tid>
     {
         T Create(T entity);
-        T Read(Tid id);
+        T Read(Tid? id);
         T Update(T entity);
         T Delete(T entity);
     }
