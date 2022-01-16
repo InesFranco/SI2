@@ -25,6 +25,11 @@ namespace TrabalhoSI2.concrete
             throw new NotImplementedException();
         }
 
+        public List<IActivo> ReadAll(int top)
+        {
+            throw new NotImplementedException();
+        }
+
         public IActivo Update(IActivo entity)
         {
             throw new NotImplementedException();

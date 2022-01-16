@@ -11,7 +11,7 @@ using TrabalhoSI2.model;
 
 namespace TrabalhoSI2.mapper
 {
-    public class EquipaMapper : IMapper<IEquipa, int>
+    public class EquipaMapper : IEquipaMapper
     {
         IContext _ctx;
         public EquipaMapper(IContext ctx)
@@ -20,7 +20,13 @@ namespace TrabalhoSI2.mapper
         }
         public IEquipa Create(IEquipa entity)
         {
-            throw new NotImplementedException();
+            entity.codigo_equipa = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.StoredProcedure,
+                "p_criaEquipa", 
+                new IDbDataParameter[]{
+                    new SqlParameter("@localizacao", entity.localizacao),
+                    new SqlParameter("@id_supervisor", entity.id_supervisor)
+                });
+            return entity;
         }
 
         public IEquipa Delete(IEquipa entity)
@@ -40,12 +46,22 @@ namespace TrabalhoSI2.mapper
             
         }
 
-        public IEquipa Read(int id)
+
+
+        //TODO: What happens when id is null?
+        public IEquipa Read(int? id)
         {
             IEquipa equipa = (Equipa)SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from equipa where codigo_equipa=@codigo_equipa", new IDbDataParameter[] { new SqlParameter("@codigo_equipa", id) }, EquipaMap);
-            if(equipa != null)
+            if (equipa != null)
                 equipa.codigo_equipa = id;
             return equipa;
+        }
+
+
+        //TODO: add top so we only return top 10 for example
+        public List<IEquipa> ReadAll(int top)
+        {
+            return SQLMapperHelper.ExecuteMapSet<IEquipa, List<IEquipa>>(_ctx, "select * from equipa", new IDbDataParameter[] {}, EquipaMap);
         }
 
 
@@ -53,5 +69,6 @@ namespace TrabalhoSI2.mapper
         {
             throw new NotImplementedException();
         }
+
     }
 }

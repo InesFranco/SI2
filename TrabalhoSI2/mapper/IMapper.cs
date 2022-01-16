@@ -10,6 +10,8 @@ namespace TrabalhoSI2.mapper
     {
         T Create(T entity);
         T Read(Tid? id);
+
+        List<T> ReadAll(int top);
         T Update(T entity);
         T Delete(T entity);
     }

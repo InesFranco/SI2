@@ -334,7 +334,9 @@ Create Procedure p_criaIntervencao
     @descricao VARCHAR(50),
     @valor FLOAT,
     @data_inicio DATE,
-    @data_fim DATE)
+    @data_fim DATE
+    --@id_intervencao int out
+    )
 
 AS
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
@@ -347,20 +349,21 @@ BEGIN TRAN
     select @data_obtencao_activo = data_aquisicao from activo where @id_activo = @id_activo
     if(@data_obtencao_activo > @data_inicio)
         begin
-            print('Data de obtenção do activo superior à de inicio de intervenção')
-            return;
+            Raiserror('Activo obtido antes da data de inicio da intervenção',16, 1 );
         end
-    if(@data_inicio < @data_fim )
-        begin
+    if(@data_inicio <= @data_fim )
+        begin try
             Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
             values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
-        end
+            select SCOPE_IDENTITY()
+        catch
     else
         begin
-            print('Erro : Data de inicio maior que data de fim')
+            Raiserror('Data de inicio maior que data de fim', 16, 1)
         end
 COMMIT TRAN
 GO
+
 --
 
 

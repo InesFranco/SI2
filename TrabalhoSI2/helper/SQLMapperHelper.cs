@@ -16,24 +16,33 @@ namespace TrabalhoSI2.helper
 
         //Delegate to MAP an entity from a row
         public delegate T Mapper<T>(IDataRecord data);
-        public static int ExecuteNonQuery(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters)
+        public static int ExecuteNonQuery(IContext ctx, CommandType commandType, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
-            using (SqlCommand cmd = ctx.createCommand())
+            try
             {
-                cmd.CommandText = cmdtxt;
-                cmd.Parameters.AddRange(dbDataParameters);
-                return cmd.ExecuteNonQuery();
+                using (SqlCommand cmd = ctx.createCommand())
+                {
+                    cmd.CommandType = commandType;
+                    cmd.CommandText = cmdtxt;
+                    cmd.Parameters.AddRange(dbDataParameters);
+                    return cmd.ExecuteNonQuery();
+                }
+            }catch(Exception ex)
+            {
+                throw(ex);
             }
+            
         }
         
 
-        public static T? ExecuteScalar<T>(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters)
+        public static T? ExecuteScalar<T>(IContext ctx, CommandType commandType, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
             using (SqlCommand cmd = ctx.createCommand())
             {
+                cmd.CommandType = commandType;
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);
-                return Convert.IsDBNull(cmd.ExecuteScalar()) ? default : (T)cmd.ExecuteScalar();
+                return Convert.IsDBNull(cmd.ExecuteScalar()) ? default : (T?)cmd.ExecuteScalar();
             }
         }
 
@@ -54,11 +63,26 @@ namespace TrabalhoSI2.helper
             return default;
         }
 
-        public static TCol ExecuteMapSet<T, TCol>(string connectionString, string cmdtxt, IDbDataParameter[] dbDataParameters, Mapper<T> map)
+        public static TCol ExecuteMapSet<T, TCol>(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters, Mapper<T> map)
             where TCol : class, IList, new()
         {
-            //TODO
-            throw new System.NotImplementedException();
+            using (SqlCommand cmd = ctx.createCommand())
+            {
+                cmd.CommandText = cmdtxt;
+                cmd.Parameters.AddRange(dbDataParameters);
+
+                IList<T> list = new List<T>();
+
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    while (rd.Read())
+                    {
+                        list.Add(map((IDataRecord)rd));
+                    }
+                }
+                return (TCol)list;
+            }
+
         }
 
         
