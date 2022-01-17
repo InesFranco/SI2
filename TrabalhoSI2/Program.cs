@@ -21,22 +21,46 @@ class Program
         RemoveTeamElement
     }
 
-    private static void GetTeam()
+    private static void printTeams(int top)
     {
         using (IContext ctx = new Context(connectionString))
         {
             EquipaMapper mapper = new EquipaMapper(ctx);
-            IList<IEquipa> equipas = mapper.ReadAll(10);
-            
-            foreach(Equipa e in equipas)
+
+            IList<IEquipa> equipas = mapper.ReadAll(top);
+
+            foreach (Equipa e in equipas)
             {
                 Console.Write("Código da Equipa: " + e.codigo_equipa + "- Localização: " + e.localizacao +
                     "- num_elems: " + e.num_elems + "- id supervisor: " + e.id_supervisor);
                 Console.WriteLine();
             }
+        }
+    }
 
-            Console.WriteLine("Insere o id da intervenção: ");
-            int intervencaoId = int.Parse(Console.ReadLine());
+    private static void GetTeamWithQualifications()
+    {
+        using (IContext ctx = new Context(connectionString))
+        {
+            printTeams(10);
+            EquipaMapper mapper = new EquipaMapper(ctx);
+            
+            int intervencaoId = -1;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Insere o id da intervenção: ");
+                     intervencaoId = int.Parse(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+            
+            
 
             int? id = SQLMapperHelper.ExecuteScalar<int?>(ctx, CommandType.Text, "select dbo.encontrarEquipaParaIntervencao(@id_intervencao)", new IDbDataParameter[] { new SqlParameter("@id_intervencao", intervencaoId) });
             if (id == null)
@@ -51,6 +75,11 @@ class Program
             Console.WriteLine("Localização : " + equipa.localizacao);
             Console.WriteLine("Número de Elementos : " + equipa.num_elems);
             Console.WriteLine("Supervisor : " + equipa.id_supervisor);
+            foreach(Funcionario funcionario in equipa.TeamMembers)
+            {
+                Console.WriteLine("Funcionario: " + funcionario.nome + " profissão : " + funcionario.profissao);
+            }
+
         }
     }
 
@@ -198,23 +227,88 @@ class Program
     {
         using (IContext ctx = new Context(connectionString))
         {
-            SQLMapperHelper.ExecuteNonQuery(ctx, CommandType.StoredProcedure, "p_adicionarElementoEquipa",
-                new IDbDataParameter[]
-                {
-                    new SqlParameter("@id_equipa", 1),
-                    new SqlParameter("@id_funcionario", 1)
-                });
-        }
+            printTeams(10);
             
+            Equipa equipa = new Equipa();
+            EquipaMapper equipaMapper = new EquipaMapper(ctx);
+
+            int idFuncionario = -1;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Acrescentar Elementos a que equipa?");
+                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id do Funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+                    
+            equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
+
+            foreach (Funcionario funcionario in equipa.TeamMembers)
+            {
+                Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
+            }
+        }
     }
+
+
+    private static void RemoveElementInTeam()
+    {
+        using (IContext ctx = new Context(connectionString))
+        {
+            printTeams(10);
+
+            Equipa equipa = new Equipa();
+            IEquipaMapper equipaMapper = new EquipaMapper(ctx);
+
+            int idFuncionario = - 1;
+
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Retirar Elemento de que equipa?");
+                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id do Funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+                    break;
+
+                }catch(Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+
+            equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
+            equipa = (Equipa)equipaMapper.UpdateRemoveTeamMember(equipa, idFuncionario);
+
+            foreach (Funcionario funcionario in equipa.TeamMembers)
+            {
+                Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
+            }
+
+
+        }
+    }
+
     static void Main(string[] args)
     {
-        //GetTeam();
+        //GetTeamWithQualifications();
         //CreateIntervention();
         //CreateTeam();
-        AddElementToTeam();
+        //AddElementToTeam();
+        RemoveElementInTeam();
         //printIntervencoesInYear();
-        //TODO: (h)Actualizar(adicionar ou remover) os elementos de uma equipe e associar as respectivas competˆencias;
+        //TODO: associar as respectivas competˆencias;
         //TODO: sem procedimentos (f) Criar o procedimento p criaInter que permite criar uma interven¸c˜ao;
 
     }

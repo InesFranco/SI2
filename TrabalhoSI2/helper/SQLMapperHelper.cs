@@ -39,6 +39,7 @@ namespace TrabalhoSI2.helper
         {
             using (SqlCommand cmd = ctx.createCommand())
             {
+
                 cmd.CommandType = commandType;
                 cmd.CommandText = cmdtxt;
                 cmd.Parameters.AddRange(dbDataParameters);

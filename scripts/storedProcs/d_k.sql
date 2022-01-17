@@ -30,12 +30,17 @@ BEGIN TRAN
     --cada funcionario so pode pertencer a uma equipa
     if not exists (select id_funcionario from funcionario_equipa where id_funcionario = @id_funcionario)
         begin
-            insert into funcionario_equipa
-            values (@id_funcionario, @id_equipa)
+            begin try
+                insert into funcionario_equipa
+                values (@id_funcionario, @id_equipa)
 
-            update equipa
-            set num_elems = num_elems + 1
-            where codigo_equipa = @id_equipa
+                update equipa
+                set num_elems = num_elems + 1
+                where codigo_equipa = @id_equipa
+            end try
+            begin catch
+                raiserror('Server Error', 16, 1)
+            end catch
         end
     else
         begin

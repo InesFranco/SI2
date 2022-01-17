@@ -6,8 +6,18 @@ using System.Threading.Tasks;
 
 namespace TrabalhoSI2.model
 {
-    internal interface IFuncionario
+    public interface IFuncionario
     {
+        int? id_funcionario { get; set; }
+        int numero_identtificacao { get; set; }
+        string nome { get; set; }
+        DateTime data_nascimento { get; set; }
+
+        string endereco { get; set; }
+        string profissao { get; set; }
+
+        int telefone { get; set; }
+        string email { get; set; }
 
     }
 }

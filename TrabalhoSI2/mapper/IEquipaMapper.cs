@@ -9,5 +9,8 @@ namespace TrabalhoSI2.mapper
 {
     public interface IEquipaMapper : IMapper<IEquipa, int?>
     {
+        public IEquipa UpdateRemoveTeamMember(IEquipa equipa, int funcionario);
+        public IEquipa UpdateAddTeamMembers(IEquipa equipa, int funcionario);
+        
     }
 }
