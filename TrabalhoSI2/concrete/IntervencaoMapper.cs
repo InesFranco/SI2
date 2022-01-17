@@ -52,6 +52,20 @@ namespace TrabalhoSI2.concrete
             throw new NotImplementedException();
         }
 
+        public Intervencao intervencaoMapper(IDataRecord record)
+        {
+            Intervencao intervencao = new Intervencao();
+            intervencao.id_intervencao = int.Parse(record[0].ToString());
+            intervencao.descricao = record[1].ToString();
+            return intervencao;
+        }
+
+        public List<Intervencao> ReadAllYear(int ano)
+        {
+            return SQLMapperHelper.ExecuteMapSet<Intervencao, List<Intervencao>>(_ctx, "select * from f_listInterventionsOfYear(@ano)",
+                new IDbDataParameter[] { new SqlParameter("@ano", ano) }, intervencaoMapper);
+        }
+
         public List<Intervencao> ReadAll(int top)
         {
             throw new NotImplementedException();

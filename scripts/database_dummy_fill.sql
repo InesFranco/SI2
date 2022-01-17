@@ -1,7 +1,6 @@
 USE Project1
 GO;
 
-
 BEGIN TRAN
 	SET NOCOUNT ON
 
@@ -44,9 +43,6 @@ BEGIN TRAN
     INSERT INTO equipa VALUES('Rua dos quem não sabem', 3, 2)
 
     INSERT INTO funcionario_equipa VALUES(1, 2)
-    INSERT INTO funcionario_equipa VALUES(2, 2)
-    INSERT INTO funcionario_equipa VALUES(2, 1)
-    INSERT INTO funcionario_equipa VALUES(3, 2)
 
     INSERT INTO intervencao VALUES(1,'arranjar piscinas', 'por atribuir', 200, '2021-04-30','2021-05-01')
     INSERT INTO intervencao VALUES(1,'drenar piscinas', 'concluido', 300, '2021-04-30', '2021-05-05')

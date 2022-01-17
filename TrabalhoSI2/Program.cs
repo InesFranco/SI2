@@ -161,25 +161,61 @@ class Program
         }
     }
 
-    static void Main(string[] args)
+    private static void printIntervencoesInYear()
     {
-        GetTeam();
-        //CreateIntervention();
-        //CreateTeam();
-        /*
-        
+        int year = -1;
+        while (true)
+        {
+            Console.WriteLine("Produzir Listagem de Intervencao de que ano?");
+            try
+            {
+                year = int.Parse(Console.ReadLine());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Valor Inválido");
+            }
+        }
+    
 
-        #region (adicionar ou remover) os elementos de uma equipe
+        IList<Intervencao> intervenctions = new List<Intervencao>();
         using (IContext ctx = new Context(connectionString))
         {
-            SqlCommand cmd = ctx.createCommand();
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.CommandText = "p_criaEquipa";
-            cmd.Parameters.Add(new SqlParameter("@localizacao", "Parque eduardo setimo"));
-            cmd.Parameters.Add(new SqlParameter("@id_supervisor", 1));
-            cmd.ExecuteNonQuery();
+            IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
+            intervenctions = intervencaoMapper.ReadAllYear(year);
         }
-        #endregion
-        */
+
+        Console.WriteLine("Intervenções:");
+        foreach (Intervencao intervencao in intervenctions)
+        {
+            Console.WriteLine("Id: " + intervencao.id_intervencao + ", Descrição: " + intervencao.descricao);
+        }
+            
+    }
+
+
+    private static void AddElementToTeam()
+    {
+        using (IContext ctx = new Context(connectionString))
+        {
+            SQLMapperHelper.ExecuteNonQuery(ctx, CommandType.StoredProcedure, "p_adicionarElementoEquipa",
+                new IDbDataParameter[]
+                {
+                    new SqlParameter("@id_equipa", 1),
+                    new SqlParameter("@id_funcionario", 1)
+                });
+        }
+            
+    }
+    static void Main(string[] args)
+    {
+        //GetTeam();
+        //CreateIntervention();
+        //CreateTeam();
+        AddElementToTeam();
+        //printIntervencoesInYear();
+        //TODO: (h)Actualizar(adicionar ou remover) os elementos de uma equipe e associar as respectivas competˆencias;
+        //TODO: sem procedimentos (f) Criar o procedimento p criaInter que permite criar uma interven¸c˜ao;
+
     }
 }

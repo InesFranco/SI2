@@ -13,5 +13,7 @@ namespace TrabalhoSI2.model
         int num_elems { get; set; }
         int id_supervisor { get; set; }
 
+
+
     }
 }

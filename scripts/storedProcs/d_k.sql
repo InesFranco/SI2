@@ -37,6 +37,10 @@ BEGIN TRAN
             set num_elems = num_elems + 1
             where codigo_equipa = @id_equipa
         end
+    else
+        begin
+            raiserror('Funcionário já pertence a uma equipa', 16, 1);
+        end
 COMMIT TRAN
 
 go
@@ -352,11 +356,11 @@ BEGIN TRAN
             Raiserror('Activo obtido antes da data de inicio da intervenção',16, 1 );
         end
     if(@data_inicio <= @data_fim )
-        begin try
+        begin
             Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim)
             values (@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)
             select SCOPE_IDENTITY()
-        catch
+        end
     else
         begin
             Raiserror('Data de inicio maior que data de fim', 16, 1)
