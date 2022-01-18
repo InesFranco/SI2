@@ -37,14 +37,26 @@ namespace TrabalhoSI2.helper
 
         public static T? ExecuteScalar<T>(IContext ctx, CommandType commandType, string cmdtxt, IDbDataParameter[] dbDataParameters)
         {
-            using (SqlCommand cmd = ctx.createCommand())
+            try
             {
+                using (SqlCommand cmd = ctx.createCommand())
+                {
 
-                cmd.CommandType = commandType;
-                cmd.CommandText = cmdtxt;
-                cmd.Parameters.AddRange(dbDataParameters);
-                return Convert.IsDBNull(cmd.ExecuteScalar()) ? default : (T?)cmd.ExecuteScalar();
+                    cmd.CommandType = commandType;
+                    cmd.CommandText = cmdtxt;
+                    cmd.Parameters.AddRange(dbDataParameters);
+                    object result = cmd.ExecuteScalar();
+                    if(result != null)
+                    {
+                        return (T?)result;
+                    }
+                    return default;
+                }
+            }catch(Exception ex)
+            {
+                throw;
             }
+            
         }
 
         public static T ExecuteMapSingle<T>(IContext ctx, string cmdtxt, IDbDataParameter[] dbDataParameters, Mapper<T> map)

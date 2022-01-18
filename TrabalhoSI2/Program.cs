@@ -141,7 +141,12 @@ class Program
 
                 intervencaoMapper.Create(intervencao);
                 if(intervencao.id_intervencao != null)
-                    intervencaoMapper.Read((int)intervencao.id_intervencao);
+                {
+                    intervencao = intervencaoMapper.Read((int)intervencao.id_intervencao);
+                    Console.WriteLine("id intervenção: " + intervencao.id_intervencao + " id activo " + intervencao.id_activo + " descrição: " + intervencao.descricao
+                        + " estado: " + intervencao.estado + " valor : " + intervencao.estado + " data inicio: " + intervencao.dataInicio + " data fim : " + intervencao.dataFim);
+                }
+                    
                     
             }
         }catch(Exception ex)
@@ -199,6 +204,7 @@ class Program
             try
             {
                 year = int.Parse(Console.ReadLine());
+                break;
             }
             catch (Exception ex)
             {
@@ -214,14 +220,19 @@ class Program
             intervenctions = intervencaoMapper.ReadAllYear(year);
         }
 
-        Console.WriteLine("Intervenções:");
-        foreach (Intervencao intervencao in intervenctions)
+        if(intervenctions.Count() != 0)
         {
-            Console.WriteLine("Id: " + intervencao.id_intervencao + ", Descrição: " + intervencao.descricao);
+            Console.WriteLine("Intervenções:");
+            foreach (Intervencao intervencao in intervenctions)
+            {
+                Console.WriteLine("Id: " + intervencao.id_intervencao + ", Descrição: " + intervencao.descricao);
+            }
         }
-            
+        else
+        {
+            Console.WriteLine("Não houve intervenções nesse ano!");
+        }
     }
-
 
     private static void AddElementToTeam()
     {
@@ -300,16 +311,187 @@ class Program
         }
     }
 
+    private static void AddCompetencias()
+    {
+        int idCompetencia = -1;
+        int idFuncionario = -1;
+        while (true)
+        {
+            try
+            {
+                Console.WriteLine("Qual o id do funcionário?");
+                idFuncionario = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Qual o id da competência?");
+                idCompetencia = int.Parse(Console.ReadLine());
+                break;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Valor Inválido");
+            }
+        }
+
+        using (Context ctx = new Context(connectionString))
+        {
+            try
+            {
+                FuncionarioMapper funcionarioMapper = new FuncionarioMapper(ctx);
+                Funcionario funcionario = funcionarioMapper.Read(idFuncionario);
+
+                funcionarioMapper.AddCompetencia(funcionario, idCompetencia);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
+    }
+
+    private static void CreateInterventionNoProcedure()
+    {
+        int id_activo;
+        string descricao;
+        int valor;
+        DateTime dataInicio;
+        DateTime dataFim;
+
+        var cultureInfo = new CultureInfo("pt-PT");
+
+        while (true)
+        {
+            try
+            {
+                Console.WriteLine("Voltar atrás?(y)");
+                if (Console.ReadLine().Equals('y')) return;
+
+
+                Console.WriteLine("Qual é o Id do activo?: ");
+                id_activo = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Qual é a descrição da intervenção?: ");
+                descricao = Console.ReadLine();
+
+                Console.WriteLine("Qual o valor da intervenção?: ");
+                valor = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Qual a data de inicio?(dd-mm-aaaa): ");
+                dataInicio = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                        DateTimeStyles.NoCurrentDateDefault);
+
+                Console.WriteLine("Qual a data de fim?(dd-mm-aaaa): ");
+                dataFim = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                       DateTimeStyles.NoCurrentDateDefault);
+                if (dataInicio > dataFim)
+                {
+                    Console.WriteLine("Data de inicio superior a data de fim");
+                }
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Valor Inválido");
+                continue;
+            }
+
+        }
+
+        using (IContext ctx = new Context(connectionString))
+        {
+            DateTime dataAquisicao = SQLMapperHelper.ExecuteScalar<DateTime>(ctx, CommandType.Text, "select data_aquisicao from activo where activo_id=@activo_id",
+                new IDbDataParameter[]
+                {
+                    new SqlParameter("@activo_id", id_activo)
+                });
+
+            if(dataAquisicao > dataInicio)
+            {
+                Console.WriteLine("Activo obtido depois da data de inicio da intervenção");
+                return;
+            }
+
+            Intervencao intervencao = new Intervencao();
+            intervencao.valor = valor;
+            intervencao.id_activo = id_activo;
+            intervencao.estado = "por atribuir";
+            intervencao.descricao = descricao;
+            intervencao.dataInicio = dataInicio;
+            intervencao.dataFim = dataFim;
+
+            IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
+            intervencao = intervencaoMapper.CreateNoProcedure(intervencao);
+
+            if(intervencao.id_intervencao != null)
+            {
+                intervencao = intervencaoMapper.Read((int)intervencao.id_intervencao);
+
+                Console.WriteLine("id intervenção: " + intervencao.id_intervencao + " id activo " + intervencao.id_activo + " descrição: " + intervencao.descricao
+                            + " estado: " + intervencao.estado + " valor : " + intervencao.estado + " data inicio: " + intervencao.dataInicio + " data fim : " + intervencao.dataFim);
+            }
+            
+        }
+    }
+
     static void Main(string[] args)
     {
+        
+        string input;
+        while (true)
+        {
+            printOptionsMenu();
+            input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    GetTeamWithQualifications();
+                    break;
+                case "2":
+                    CreateIntervention();
+                    break;
+                case "3":
+                    CreateTeam();
+                    break;
+                case "4":
+                    AddElementToTeam();
+                    break;
+                case "5":
+                    RemoveElementInTeam();
+                    break;
+                case "6":
+                    printIntervencoesInYear();
+                    break;
+                case "7":
+                    AddCompetencias();
+                    break;
+                case "8":
+                    CreateInterventionNoProcedure();
+                    break;
+                default:
+                    Console.WriteLine("Escolha uma opção válida");
+                    break;
+            }
+        }
         //GetTeamWithQualifications();
         //CreateIntervention();
         //CreateTeam();
         //AddElementToTeam();
-        RemoveElementInTeam();
+        //RemoveElementInTeam();
         //printIntervencoesInYear();
-        //TODO: associar as respectivas competˆencias;
         //TODO: sem procedimentos (f) Criar o procedimento p criaInter que permite criar uma interven¸c˜ao;
 
+    }
+
+    private static void printOptionsMenu()
+    {
+        Console.WriteLine("1 : Obter equipa com as qualificações para fazer a intervenção");
+        Console.WriteLine("2 : Criar uma intervenção");
+        Console.WriteLine("3 : Criar uma equipa");
+        Console.WriteLine("4 : Adicionar membro a uma equipa");
+        Console.WriteLine("5 : Remover membro de uma equipa");
+        Console.WriteLine("6 : Imprimir as intervenções de uma dado ano");
+        Console.WriteLine("7 : Adicionar Competências a um funcionário");
+        Console.WriteLine("8 : Criar intervenção sem procedimento");
     }
 }

@@ -7,8 +7,7 @@ using TrabalhoSI2.model;
 
 namespace TrabalhoSI2.mapper
 {
-    public interface IFuncionarioMapper : IMapper<Funcionario,int>
+    public interface ICompetenciaMapper : IMapper<Competencia, int>
     {
-        public Funcionario AddCompetencia(Funcionario entity, int idCompetencia);
     }
 }

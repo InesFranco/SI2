@@ -73,10 +73,14 @@ create procedure p_adicionarCompetencias
     (@id_funcionario int,
     @id_competencia int)
 as
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
-    begin
+BEGIN TRAN
+    begin try
         insert into funcionario_competencia values (@id_funcionario, @id_competencia)
-    end
+    end try
+    begin catch
+        raiserror ('Server Error', 16, 1)
+    end catch
+
 COMMIT TRAN
 --h ends here
 
@@ -355,7 +359,7 @@ BEGIN TRAN
     set @estado = 'por atribuir'
 
     DECLARE @data_obtencao_activo date
-    select @data_obtencao_activo = data_aquisicao from activo where @id_activo = @id_activo
+    select @data_obtencao_activo = data_aquisicao from activo where activo_id = @id_activo
     if(@data_obtencao_activo > @data_inicio)
         begin
             Raiserror('Activo obtido antes da data de inicio da intervenção',16, 1 );

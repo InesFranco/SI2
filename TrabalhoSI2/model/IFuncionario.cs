@@ -19,5 +19,7 @@ namespace TrabalhoSI2.model
         int telefone { get; set; }
         string email { get; set; }
 
+        List<Competencia> competencias { get; set; }
+
     }
 }

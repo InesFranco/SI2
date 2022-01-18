@@ -42,6 +42,31 @@ namespace TrabalhoSI2.concrete
             
         }
 
+        public Intervencao CreateNoProcedure(Intervencao entity)
+        {
+            try
+            {
+                entity.id_intervencao =  SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.Text, "Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim) values(@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)",
+                new IDbDataParameter[]
+                {
+                    new SqlParameter("@id_activo", entity.id_activo),
+                    new SqlParameter("@descricao", entity.descricao),
+                    new SqlParameter("@estado", entity.estado),
+                    new SqlParameter("@valor",entity.valor),
+                    new SqlParameter("@data_inicio", entity.dataInicio),
+                    new SqlParameter("@data_fim", entity.dataFim)
+                });
+                return entity;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+        }
+
+
+
         public Intervencao Delete(Intervencao entity)
         {
             throw new NotImplementedException();
@@ -49,10 +74,14 @@ namespace TrabalhoSI2.concrete
 
         public Intervencao Read(int id)
         {
-            throw new NotImplementedException();
+            return SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from intervencao where @id_intervencao=id_intervencao",
+                new IDbDataParameter[]
+                {
+                    new SqlParameter("@id_intervencao", id)
+                }, intervencaoMap);
         }
 
-        public Intervencao intervencaoMapper(IDataRecord record)
+        public Intervencao intervencaoMap(IDataRecord record)
         {
             Intervencao intervencao = new Intervencao();
             intervencao.id_intervencao = int.Parse(record[0].ToString());
@@ -63,7 +92,7 @@ namespace TrabalhoSI2.concrete
         public List<Intervencao> ReadAllYear(int ano)
         {
             return SQLMapperHelper.ExecuteMapSet<Intervencao, List<Intervencao>>(_ctx, "select * from f_listInterventionsOfYear(@ano)",
-                new IDbDataParameter[] { new SqlParameter("@ano", ano) }, intervencaoMapper);
+                new IDbDataParameter[] { new SqlParameter("@ano", ano) }, intervencaoMap);
         }
 
         public List<Intervencao> ReadAll(int top)
