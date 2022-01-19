@@ -350,11 +350,10 @@ Create Procedure p_criaIntervencao
     @data_fim DATE
     --@id_intervencao int out
     )
-
 AS
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+SET XACT_ABORT ON
 BEGIN TRAN
-
     DECLARE @estado varchar(30)
     set @estado = 'por atribuir'
 
@@ -362,7 +361,7 @@ BEGIN TRAN
     select @data_obtencao_activo = data_aquisicao from activo where activo_id = @id_activo
     if(@data_obtencao_activo > @data_inicio)
         begin
-            Raiserror('Activo obtido antes da data de inicio da intervenção',16, 1 );
+            THROW 50000, 'Activo obtido antes da data de inicio da intervenção', 1
         end
     if(@data_inicio <= @data_fim )
         begin
@@ -372,7 +371,7 @@ BEGIN TRAN
         end
     else
         begin
-            Raiserror('Data de inicio maior que data de fim', 16, 1)
+            THROW 50000,'Data de inicio maior que data de fim', 1
         end
 COMMIT TRAN
 GO
@@ -386,18 +385,22 @@ create procedure p_criaEquipa
     @id_supervisor int)
 as
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-BEGIN TRAN
-    begin
-
+SET XACT_ABORT ON
+begin try
+    BEGIN TRAN
         insert into equipa (localizacao, num_elems, id_supervisor)
         values (@localizacao, 1, @id_supervisor)
 
-        --adicionar a tablea funcionario equipa
+        --adicionar a tabela funcionario equipa
         declare @codigo_equipa int
         set @codigo_equipa = (select max(codigo_equipa) from equipa)
         insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
-    end
-COMMIT TRAN
+    commit tran
+end try
+begin catch
+    THROW
+end catch
+
 GO
 --
 
@@ -420,7 +423,6 @@ Create Procedure p_updateInter(
         @id_intervencao int,
         @estado VARCHAR(50))
 as
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 BEGIN TRAN
     update intervencao
     set	estado = @estado

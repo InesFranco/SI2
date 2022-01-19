@@ -21,13 +21,20 @@ namespace TrabalhoSI2.mapper
         }
         public IEquipa Create(IEquipa entity)
         {
-            entity.codigo_equipa = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.StoredProcedure,
-                "p_criaEquipa", 
+            try
+            {
+                entity.codigo_equipa = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.StoredProcedure,
+                "p_criaEquipa",
                 new IDbDataParameter[]{
                     new SqlParameter("@localizacao", entity.localizacao),
                     new SqlParameter("@id_supervisor", entity.id_supervisor)
                 });
-            
+
+            }catch (Exception ex)
+            {
+                throw;
+            }
+
             //Add supervisor as team member
             FuncionarioMapper funcionarioMapper = new FuncionarioMapper(_ctx);
             Funcionario funcionario = funcionarioMapper.Read(entity.id_supervisor);
@@ -59,22 +66,46 @@ namespace TrabalhoSI2.mapper
         //TODO: What happens when id is null?
         public IEquipa Read(int? id)
         {
-            IEquipa equipa = (Equipa)SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from equipa where codigo_equipa=@codigo_equipa", new IDbDataParameter[] { new SqlParameter("@codigo_equipa", id) }, EquipaMap);
-            if (equipa != null)
-                equipa.codigo_equipa = id;
-
-            SqlCommand cmd = _ctx.createCommand();
-            cmd.CommandText = "select id_funcionario from funcionario_equipa where @codigo_equipa=codigo_equipa";
-            cmd.Parameters.Add(new SqlParameter("@codigo_equipa", id));
-            using (SqlDataReader dr = cmd.ExecuteReader())
+            if(id != null)
             {
-                FuncionarioMapper funcionarioMapper = new FuncionarioMapper(_ctx);
-                while (dr.Read())
+                IEquipa equipa = (Equipa)SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from equipa where codigo_equipa=@codigo_equipa",
+                new IDbDataParameter[] {
+                    new SqlParameter("@codigo_equipa", id)
+                }, EquipaMap);
+                if (equipa != null)
                 {
-                    equipa.TeamMembers.Add(funcionarioMapper.Read(dr.GetInt32(0)));
+                    //Add all the team members
+                    SqlCommand cmd = _ctx.createCommand();
+                    cmd.CommandText = "select id_funcionario from funcionario_equipa where @codigo_equipa=codigo_equipa";
+                    cmd.Parameters.Add(new SqlParameter("@codigo_equipa", id));
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        FuncionarioMapper funcionarioMapper = new FuncionarioMapper(_ctx);
+                        while (dr.Read())
+                        {
+                            equipa.TeamMembers.Add(funcionarioMapper.Read(dr.GetInt32(0)));
+                        }
+                    }
+
+                    //Add all the interventions assigned to this team
+                    cmd = _ctx.createCommand();
+                    cmd.CommandText = "select id_intervencao from intervencao_equipa where @codigo_equipa=codigo_equipa";
+                    cmd.Parameters.Add(new SqlParameter("@codigo_equipa", id));
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        IntervencaoMapper intervencaoMapper = new IntervencaoMapper(_ctx);
+                        while (dr.Read())
+                        {
+                            equipa.intervencoes.Add(intervencaoMapper.Read(dr.GetInt32(0)));
+                        }
+                    }
+                    return equipa;
                 }
             }
-            return equipa;
+            
+            return null;
         }
 
 
@@ -119,11 +150,36 @@ namespace TrabalhoSI2.mapper
             return equipa;
         }
 
-        //adds an element to the team
+
+
+        //
         public IEquipa Update(IEquipa entity)
         {
             throw new NotImplementedException();
         }
 
+        public IEquipa ReadTeamWithQualifications(int Idintervencao)
+        {
+            int? idEquipa = SQLMapperHelper.ExecuteScalar<int?>(_ctx, 
+                CommandType.Text, 
+                "select dbo.encontrarEquipaParaIntervencao(@id_intervencao)", 
+                new IDbDataParameter[] 
+                {
+                    new SqlParameter("@id_intervencao", Idintervencao) 
+                });
+            return Read(idEquipa);
+        }
+
+        public IEquipa AssignIntervention(IEquipa equipa, Intervencao intervencao)
+        {
+            SQLMapperHelper.ExecuteNonQuery(_ctx, CommandType.Text, "insert into intervencao_equipa(codigo_equipa, id_intervencao, data_inicio) values(@codigo_equipa, @id_intervencao, @data_inicio)",
+                new IDbDataParameter[]
+                {
+                    new SqlParameter("@codigo_equipa", equipa.codigo_equipa),
+                    new SqlParameter("@id_intervencao", intervencao.id_intervencao),
+                    new SqlParameter("@data_inicio", intervencao.dataInicio)
+                });
+            return Read(equipa.codigo_equipa);
+        }
     }
 }

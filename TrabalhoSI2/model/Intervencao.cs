@@ -12,7 +12,7 @@ namespace TrabalhoSI2.model
         public int? id_activo { get; set ; }
         public string descricao { get ; set ; }
         public string? estado { get; set ; }
-        public int valor { get; set ; }
+        public float valor { get; set ; }
         public DateTime dataInicio { get; set ; }
         public DateTime dataFim { get ; set ; }
     }

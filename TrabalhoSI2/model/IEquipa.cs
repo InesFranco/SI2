@@ -14,6 +14,7 @@ namespace TrabalhoSI2.model
         int id_supervisor { get; set; }
 
         public List<Funcionario> TeamMembers { get; set; }
+        public List<Intervencao> intervencoes { get; set; }
 
     }
 }

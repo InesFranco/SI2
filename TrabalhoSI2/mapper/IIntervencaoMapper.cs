@@ -7,7 +7,7 @@ using TrabalhoSI2.model;
 
 namespace TrabalhoSI2.mapper
 {
-    public interface IIntervencaoMapper : IMapper<Intervencao, int>
+    public interface IIntervencaoMapper : IMapper<Intervencao, int?>
     {
     }
 }

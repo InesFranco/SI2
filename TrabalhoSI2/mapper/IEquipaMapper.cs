@@ -11,6 +11,10 @@ namespace TrabalhoSI2.mapper
     {
         public IEquipa UpdateRemoveTeamMember(IEquipa equipa, int funcionario);
         public IEquipa UpdateAddTeamMembers(IEquipa equipa, int funcionario);
+
+        public IEquipa ReadTeamWithQualifications(int Idintervencao);
+
+        public IEquipa AssignIntervention(IEquipa equipa, Intervencao intervencao);
         
     }
 }

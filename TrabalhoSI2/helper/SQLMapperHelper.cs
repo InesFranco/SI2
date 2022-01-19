@@ -46,13 +46,13 @@ namespace TrabalhoSI2.helper
                     cmd.CommandText = cmdtxt;
                     cmd.Parameters.AddRange(dbDataParameters);
                     object result = cmd.ExecuteScalar();
-                    if(result != null)
+                    if(!Convert.IsDBNull(result))
                     {
-                        return (T?)result;
+                        return (T)result;
                     }
                     return default;
                 }
-            }catch(Exception ex)
+            }catch(SqlException ex)
             {
                 throw;
             }

@@ -24,7 +24,7 @@ namespace TrabalhoSI2.concrete
         {
            try
             {
-                entity.id_intervencao = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.StoredProcedure, "p_criaIntervencao",
+                entity.id_intervencao = (int)SQLMapperHelper.ExecuteScalar<decimal>(_ctx, CommandType.StoredProcedure, "p_criaIntervencao",
                 new IDbDataParameter[] {
                     new SqlParameter("@id_activo", entity.id_activo),
                     new SqlParameter("@descricao", entity.descricao),
@@ -32,8 +32,7 @@ namespace TrabalhoSI2.concrete
                     new SqlParameter("@data_inicio", entity.dataInicio),
                     new SqlParameter("@data_fim", entity.dataFim)
                 }); 
-                
-                return entity;
+                return Read(entity.id_intervencao);
             }
             catch (Exception ex)
             {
@@ -46,7 +45,7 @@ namespace TrabalhoSI2.concrete
         {
             try
             {
-                entity.id_intervencao =  SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.Text, "Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim) values(@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)",
+                entity.id_intervencao = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.Text, "Insert into intervencao (id_activo, descricao, estado, valor, data_inicio, data_fim) values(@id_activo, @descricao, @estado, @valor, @data_inicio, @data_fim)",
                 new IDbDataParameter[]
                 {
                     new SqlParameter("@id_activo", entity.id_activo),
@@ -58,7 +57,7 @@ namespace TrabalhoSI2.concrete
                 });
                 return entity;
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 throw;
             }
@@ -72,20 +71,29 @@ namespace TrabalhoSI2.concrete
             throw new NotImplementedException();
         }
 
-        public Intervencao Read(int id)
+        public Intervencao Read(int? id)
         {
-            return SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from intervencao where @id_intervencao=id_intervencao",
+            if(id != null)
+            {
+                return SQLMapperHelper.ExecuteMapSingle(_ctx, "select * from intervencao where @id_intervencao=id_intervencao",
                 new IDbDataParameter[]
                 {
                     new SqlParameter("@id_intervencao", id)
                 }, intervencaoMap);
+            }
+            return null;
         }
-
+         
         public Intervencao intervencaoMap(IDataRecord record)
         {
             Intervencao intervencao = new Intervencao();
             intervencao.id_intervencao = int.Parse(record[0].ToString());
-            intervencao.descricao = record[1].ToString();
+            intervencao.id_activo = int.Parse(record[1].ToString());
+            intervencao.descricao = record[2].ToString();
+            intervencao.estado = record[3].ToString();
+            intervencao.valor = float.Parse(record[4].ToString());
+            intervencao.dataInicio = DateTime.Parse(record[5].ToString());
+            intervencao.dataFim = DateTime.Parse(record[6].ToString());
             return intervencao;
         }
 
@@ -100,9 +108,29 @@ namespace TrabalhoSI2.concrete
             throw new NotImplementedException();
         }
 
+        //update state of the intervention
         public Intervencao Update(Intervencao entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                SQLMapperHelper.ExecuteNonQuery(_ctx, CommandType.StoredProcedure, "p_updateInter",
+                     new IDbDataParameter[]
+                     {
+                            new SqlParameter("@id_intervencao", entity.id_intervencao),
+                            new SqlParameter("@estado", entity.estado)
+                     });
+                
+                return Read((int)entity.id_intervencao);
+            }
+            catch(SqlException ex)
+            {
+                throw;
+            }
+
+            
+            
         }
+
+       
     }
 }
