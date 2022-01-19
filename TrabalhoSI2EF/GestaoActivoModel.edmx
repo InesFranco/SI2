@@ -1,0 +1,993 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Project1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="activo">
+          <Key>
+            <PropertyRef Name="activo_id" />
+          </Key>
+          <Property Name="activo_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nome" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="data_aquisicao" Type="date" Nullable="false" />
+          <Property Name="estado" Type="bit" Nullable="false" />
+          <Property Name="marca" Type="varchar" MaxLength="20" />
+          <Property Name="modelo" Type="varchar" MaxLength="20" />
+          <Property Name="tipo" Type="int" />
+        </EntityType>
+        <EntityType Name="activo_filho">
+          <Key>
+            <PropertyRef Name="id_activo_pai" />
+            <PropertyRef Name="id_activo_filho" />
+          </Key>
+          <Property Name="id_activo_pai" Type="int" Nullable="false" />
+          <Property Name="id_activo_filho" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="activo_gerente">
+          <Key>
+            <PropertyRef Name="id_activo" />
+            <PropertyRef Name="id_gerente" />
+          </Key>
+          <Property Name="id_activo" Type="int" Nullable="false" />
+          <Property Name="id_gerente" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="activo_preçocomercial">
+          <Key>
+            <PropertyRef Name="id_activo" />
+            <PropertyRef Name="data_alteracao" />
+          </Key>
+          <Property Name="id_activo" Type="int" Nullable="false" />
+          <Property Name="preco" Type="float" Nullable="false" />
+          <Property Name="data_alteracao" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="competencia">
+          <Key>
+            <PropertyRef Name="id_competencia" />
+          </Key>
+          <Property Name="id_competencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="equipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+          </Key>
+          <Property Name="codigo_equipa" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="localizacao" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="num_elems" Type="int" Nullable="false" />
+          <Property Name="id_supervisor" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="funcionario">
+          <Key>
+            <PropertyRef Name="id_funcionario" />
+          </Key>
+          <Property Name="id_funcionario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="numero_identificacao" Type="int" Nullable="false" />
+          <Property Name="nome" Type="varchar" MaxLength="50" />
+          <Property Name="data_nascimento" Type="date" />
+          <Property Name="endereco" Type="varchar" MaxLength="50" />
+          <Property Name="profissao" Type="varchar" MaxLength="50" />
+          <Property Name="telefone" Type="int" />
+          <Property Name="email" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="funcionario_competencia">
+          <Key>
+            <PropertyRef Name="id_funcionario" />
+            <PropertyRef Name="id_competencia" />
+          </Key>
+          <Property Name="id_funcionario" Type="int" Nullable="false" />
+          <Property Name="id_competencia" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="funcionario_equipa">
+          <Key>
+            <PropertyRef Name="id_funcionario" />
+            <PropertyRef Name="codigo_equipa" />
+          </Key>
+          <Property Name="id_funcionario" Type="int" Nullable="false" />
+          <Property Name="codigo_equipa" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="intervencao">
+          <Key>
+            <PropertyRef Name="id_intervencao" />
+          </Key>
+          <Property Name="id_intervencao" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="id_activo" Type="int" />
+          <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="valor" Type="float" Nullable="false" />
+          <Property Name="data_inicio" Type="date" Nullable="false" />
+          <Property Name="data_fim" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="intervencao_equipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+            <PropertyRef Name="id_intervencao" />
+          </Key>
+          <Property Name="codigo_equipa" Type="int" Nullable="false" />
+          <Property Name="id_intervencao" Type="int" Nullable="false" />
+          <Property Name="data_inicio" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tipo_activo">
+          <Key>
+            <PropertyRef Name="id_tipo" />
+          </Key>
+          <Property Name="id_tipo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="description" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Project1.dbo.IntervencoesPorEquipa' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="IntervencoesPorEquipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+            <PropertyRef Name="num_elems" />
+          </Key>
+          <Property Name="codigo_equipa" Type="int" Nullable="false" />
+          <Property Name="num_elems" Type="int" Nullable="false" />
+          <Property Name="intervencoes_atribuidas" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vw_Resumo_Intervencao">
+          <Key>
+            <PropertyRef Name="id_intervencao" />
+            <PropertyRef Name="descricao" />
+            <PropertyRef Name="estado" />
+            <PropertyRef Name="valor" />
+            <PropertyRef Name="data_inicio" />
+            <PropertyRef Name="data_fim" />
+            <PropertyRef Name="nome_activo" />
+          </Key>
+          <Property Name="id_intervencao" Type="int" Nullable="false" />
+          <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="estado" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="valor" Type="float" Nullable="false" />
+          <Property Name="data_inicio" Type="date" Nullable="false" />
+          <Property Name="data_fim" Type="date" Nullable="false" />
+          <Property Name="nome_activo" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="marca_activo" Type="varchar" MaxLength="20" />
+          <Property Name="modelo_activo" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <Association Name="FK__activo__tipo__1FD8A9E3">
+          <End Role="tipo_activo" Type="Self.tipo_activo" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_activo">
+              <PropertyRef Name="id_tipo" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="tipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_fi__id_ac__25918339">
+          <End Role="activo" Type="Self.activo" Multiplicity="1" />
+          <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="activo_filho">
+              <PropertyRef Name="id_activo_pai" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_fi__id_ac__2685A772">
+          <End Role="activo" Type="Self.activo" Multiplicity="1" />
+          <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="activo_filho">
+              <PropertyRef Name="id_activo_filho" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_ge__id_ac__2C3E80C8">
+          <End Role="activo" Type="Self.activo" Multiplicity="1" />
+          <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="activo_gerente">
+              <PropertyRef Name="id_activo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_ge__id_ge__2D32A501">
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+          <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="funcionario">
+              <PropertyRef Name="id_funcionario" />
+            </Principal>
+            <Dependent Role="activo_gerente">
+              <PropertyRef Name="id_gerente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_pr__id_ac__22B5168E">
+          <End Role="activo" Type="Self.activo" Multiplicity="1" />
+          <End Role="activo_preçocomercial" Type="Self.activo_preçocomercial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="activo_preçocomercial">
+              <PropertyRef Name="id_activo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__funcionar__codig__3B80C458">
+          <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
+          <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Principal>
+            <Dependent Role="funcionario_equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__funcionar__id_co__31F75A1E">
+          <End Role="competencia" Type="Self.competencia" Multiplicity="1" />
+          <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="competencia">
+              <PropertyRef Name="id_competencia" />
+            </Principal>
+            <Dependent Role="funcionario_competencia">
+              <PropertyRef Name="id_competencia" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__funcionar__id_fu__32EB7E57">
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+          <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="funcionario">
+              <PropertyRef Name="id_funcionario" />
+            </Principal>
+            <Dependent Role="funcionario_competencia">
+              <PropertyRef Name="id_funcionario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__funcionar__id_fu__3A8CA01F">
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+          <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="funcionario">
+              <PropertyRef Name="id_funcionario" />
+            </Principal>
+            <Dependent Role="funcionario_equipa">
+              <PropertyRef Name="id_funcionario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__codig__3E5D3103">
+          <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
+          <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Principal>
+            <Dependent Role="intervencao_equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__id_ac__35C7EB02">
+          <End Role="activo" Type="Self.activo" Multiplicity="0..1" />
+          <End Role="intervencao" Type="Self.intervencao" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="intervencao">
+              <PropertyRef Name="id_activo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__id_in__3F51553C">
+          <End Role="intervencao" Type="Self.intervencao" Multiplicity="1" />
+          <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="intervencao">
+              <PropertyRef Name="id_intervencao" />
+            </Principal>
+            <Dependent Role="intervencao_equipa">
+              <PropertyRef Name="id_intervencao" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="encontrarEquipaParaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="id_intervencao" Type="int" Mode="In" />
+        </Function>
+        <Function Name="f_listIntervention" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_intervencao" Type="int" Mode="In" />
+          <Parameter Name="year" Type="int" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="id_intervencao" Type="int" Nullable="false" />
+                <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="f_listInterventionsOfYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ano" Type="int" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="id_intervencao" Type="int" Nullable="false" />
+                <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="p_actualizaInformacaoFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+          <Parameter Name="endereco" Type="varchar" Mode="In" />
+          <Parameter Name="profissao" Type="varchar" Mode="In" />
+          <Parameter Name="telefone" Type="int" Mode="In" />
+          <Parameter Name="email" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="p_adicionarCompetencias" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+          <Parameter Name="id_competencia" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_adicionarElementoEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_equipa" Type="int" Mode="In" />
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_criaEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="localizacao" Type="varchar" Mode="In" />
+          <Parameter Name="id_supervisor" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_criaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_activo" Type="int" Mode="In" />
+          <Parameter Name="descricao" Type="varchar" Mode="In" />
+          <Parameter Name="valor" Type="float" Mode="In" />
+          <Parameter Name="data_inicio" Type="date" Mode="In" />
+          <Parameter Name="data_fim" Type="date" Mode="In" />
+        </Function>
+        <Function Name="p_eliminarEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_equipa" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_encontrarEquipaParaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+          <Parameter Name="id_intervencao" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_inserirFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="numero_identificacao" Type="int" Mode="In" />
+          <Parameter Name="nome" Type="varchar" Mode="In" />
+          <Parameter Name="data_nascimento" Type="date" Mode="In" />
+          <Parameter Name="endereco" Type="varchar" Mode="In" />
+          <Parameter Name="profissao" Type="varchar" Mode="In" />
+          <Parameter Name="telefone" Type="int" Mode="In" />
+          <Parameter Name="email" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="p_removerElementoEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_equipa" Type="int" Mode="In" />
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_removerFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+        </Function>
+        <Function Name="p_updateInter" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_intervencao" Type="int" Mode="In" />
+          <Parameter Name="estado" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="verificarCompetenciasEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="id_equipa" Type="int" Mode="In" />
+          <Parameter Name="competenciaNecessaria" Type="varchar" Mode="In" />
+          <Parameter Name="id_activo" Type="int" Mode="In" />
+        </Function>
+        <Function Name="verificarCompetenciasFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+          <Parameter Name="id_funcionario" Type="int" Mode="In" />
+          <Parameter Name="competenciaNecessaria" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="Project1ModelStoreContainer">
+          <EntitySet Name="activo" EntityType="Self.activo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="activo_filho" EntityType="Self.activo_filho" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="activo_gerente" EntityType="Self.activo_gerente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="activo_preçocomercial" EntityType="Self.activo_preçocomercial" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="competencia" EntityType="Self.competencia" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="equipa" EntityType="Self.equipa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="funcionario" EntityType="Self.funcionario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="funcionario_competencia" EntityType="Self.funcionario_competencia" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="funcionario_equipa" EntityType="Self.funcionario_equipa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="intervencao" EntityType="Self.intervencao" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="intervencao_equipa" EntityType="Self.intervencao_equipa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tipo_activo" EntityType="Self.tipo_activo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="IntervencoesPorEquipa" EntityType="Self.IntervencoesPorEquipa" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [IntervencoesPorEquipa].[codigo_equipa] AS [codigo_equipa], 
+    [IntervencoesPorEquipa].[num_elems] AS [num_elems], 
+    [IntervencoesPorEquipa].[intervencoes_atribuidas] AS [intervencoes_atribuidas]
+    FROM [dbo].[IntervencoesPorEquipa] AS [IntervencoesPorEquipa]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vw_Resumo_Intervencao" EntityType="Self.vw_Resumo_Intervencao" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [vw_Resumo_Intervencao].[id_intervencao] AS [id_intervencao], 
+    [vw_Resumo_Intervencao].[descricao] AS [descricao], 
+    [vw_Resumo_Intervencao].[estado] AS [estado], 
+    [vw_Resumo_Intervencao].[valor] AS [valor], 
+    [vw_Resumo_Intervencao].[data_inicio] AS [data_inicio], 
+    [vw_Resumo_Intervencao].[data_fim] AS [data_fim], 
+    [vw_Resumo_Intervencao].[nome_activo] AS [nome_activo], 
+    [vw_Resumo_Intervencao].[marca_activo] AS [marca_activo], 
+    [vw_Resumo_Intervencao].[modelo_activo] AS [modelo_activo]
+    FROM [dbo].[vw_Resumo_Intervencao] AS [vw_Resumo_Intervencao]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__activo__tipo__1FD8A9E3" Association="Self.FK__activo__tipo__1FD8A9E3">
+            <End Role="tipo_activo" EntitySet="tipo_activo" />
+            <End Role="activo" EntitySet="activo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_fi__id_ac__25918339" Association="Self.FK__activo_fi__id_ac__25918339">
+            <End Role="activo" EntitySet="activo" />
+            <End Role="activo_filho" EntitySet="activo_filho" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_fi__id_ac__2685A772" Association="Self.FK__activo_fi__id_ac__2685A772">
+            <End Role="activo" EntitySet="activo" />
+            <End Role="activo_filho" EntitySet="activo_filho" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_ge__id_ac__2C3E80C8" Association="Self.FK__activo_ge__id_ac__2C3E80C8">
+            <End Role="activo" EntitySet="activo" />
+            <End Role="activo_gerente" EntitySet="activo_gerente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_ge__id_ge__2D32A501" Association="Self.FK__activo_ge__id_ge__2D32A501">
+            <End Role="funcionario" EntitySet="funcionario" />
+            <End Role="activo_gerente" EntitySet="activo_gerente" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_pr__id_ac__22B5168E" Association="Self.FK__activo_pr__id_ac__22B5168E">
+            <End Role="activo" EntitySet="activo" />
+            <End Role="activo_preçocomercial" EntitySet="activo_preçocomercial" />
+          </AssociationSet>
+          <AssociationSet Name="FK__funcionar__codig__3B80C458" Association="Self.FK__funcionar__codig__3B80C458">
+            <End Role="equipa" EntitySet="equipa" />
+            <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
+          </AssociationSet>
+          <AssociationSet Name="FK__funcionar__id_co__31F75A1E" Association="Self.FK__funcionar__id_co__31F75A1E">
+            <End Role="competencia" EntitySet="competencia" />
+            <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
+          </AssociationSet>
+          <AssociationSet Name="FK__funcionar__id_fu__32EB7E57" Association="Self.FK__funcionar__id_fu__32EB7E57">
+            <End Role="funcionario" EntitySet="funcionario" />
+            <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
+          </AssociationSet>
+          <AssociationSet Name="FK__funcionar__id_fu__3A8CA01F" Association="Self.FK__funcionar__id_fu__3A8CA01F">
+            <End Role="funcionario" EntitySet="funcionario" />
+            <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__codig__3E5D3103" Association="Self.FK__intervenc__codig__3E5D3103">
+            <End Role="equipa" EntitySet="equipa" />
+            <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__id_ac__35C7EB02" Association="Self.FK__intervenc__id_ac__35C7EB02">
+            <End Role="activo" EntitySet="activo" />
+            <End Role="intervencao" EntitySet="intervencao" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__id_in__3F51553C" Association="Self.FK__intervenc__id_in__3F51553C">
+            <End Role="intervencao" EntitySet="intervencao" />
+            <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="Project1Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <ComplexType Name="f_listIntervention_Result">
+          <Property Name="id_intervencao" Type="Int32" Nullable="false" />
+          <Property Name="descricao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="f_listInterventionsOfYear_Result">
+          <Property Name="id_intervencao" Type="Int32" Nullable="false" />
+          <Property Name="descricao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="activo">
+          <Key>
+            <PropertyRef Name="activo_id" />
+          </Key>
+          <Property Name="activo_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nome" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="data_aquisicao" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="estado" Type="Boolean" Nullable="false" />
+          <Property Name="marca" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="modelo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="tipo" Type="Int32" />
+          <NavigationProperty Name="tipo_activo" Relationship="Self.FK__activo__tipo__1FD8A9E3" FromRole="activo" ToRole="tipo_activo" />
+          <NavigationProperty Name="activo_preçocomercial" Relationship="Self.FK__activo_pr__id_ac__22B5168E" FromRole="activo" ToRole="activo_preçocomercial" />
+          <NavigationProperty Name="intervencaos" Relationship="Self.FK__intervenc__id_ac__35C7EB02" FromRole="activo" ToRole="intervencao" />
+          <NavigationProperty Name="activo1" Relationship="Self.activo_filho" FromRole="activo" ToRole="activo1" />
+          <NavigationProperty Name="activoes" Relationship="Self.activo_filho" FromRole="activo1" ToRole="activo" />
+          <NavigationProperty Name="funcionarios" Relationship="Self.activo_gerente" FromRole="activo" ToRole="funcionario" />
+        </EntityType>
+        <EntityType Name="activo_preçocomercial">
+          <Key>
+            <PropertyRef Name="id_activo" />
+            <PropertyRef Name="data_alteracao" />
+          </Key>
+          <Property Name="id_activo" Type="Int32" Nullable="false" />
+          <Property Name="preco" Type="Double" Nullable="false" />
+          <Property Name="data_alteracao" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="activo" Relationship="Self.FK__activo_pr__id_ac__22B5168E" FromRole="activo_preçocomercial" ToRole="activo" />
+        </EntityType>
+        <EntityType Name="competencia">
+          <Key>
+            <PropertyRef Name="id_competencia" />
+          </Key>
+          <Property Name="id_competencia" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="descricao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="funcionarios" Relationship="Self.funcionario_competencia" FromRole="competencia" ToRole="funcionario" />
+        </EntityType>
+        <EntityType Name="equipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+          </Key>
+          <Property Name="codigo_equipa" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="localizacao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="num_elems" Type="Int32" Nullable="false" />
+          <Property Name="id_supervisor" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="intervencao_equipa" Relationship="Self.FK__intervenc__codig__3E5D3103" FromRole="equipa" ToRole="intervencao_equipa" />
+          <NavigationProperty Name="funcionarios" Relationship="Self.funcionario_equipa" FromRole="equipa" ToRole="funcionario" />
+        </EntityType>
+        <EntityType Name="funcionario">
+          <Key>
+            <PropertyRef Name="id_funcionario" />
+          </Key>
+          <Property Name="id_funcionario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="numero_identificacao" Type="Int32" Nullable="false" />
+          <Property Name="nome" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="data_nascimento" Type="DateTime" Precision="0" />
+          <Property Name="endereco" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="profissao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="telefone" Type="Int32" />
+          <Property Name="email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activoes" Relationship="Self.activo_gerente" FromRole="funcionario" ToRole="activo" />
+          <NavigationProperty Name="competencias" Relationship="Self.funcionario_competencia" FromRole="funcionario" ToRole="competencia" />
+          <NavigationProperty Name="equipas" Relationship="Self.funcionario_equipa" FromRole="funcionario" ToRole="equipa" />
+        </EntityType>
+        <EntityType Name="intervencao">
+          <Key>
+            <PropertyRef Name="id_intervencao" />
+          </Key>
+          <Property Name="id_intervencao" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="id_activo" Type="Int32" />
+          <Property Name="descricao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="valor" Type="Double" Nullable="false" />
+          <Property Name="data_inicio" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="data_fim" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="activo" Relationship="Self.FK__intervenc__id_ac__35C7EB02" FromRole="intervencao" ToRole="activo" />
+          <NavigationProperty Name="intervencao_equipa" Relationship="Self.FK__intervenc__id_in__3F51553C" FromRole="intervencao" ToRole="intervencao_equipa" />
+        </EntityType>
+        <EntityType Name="intervencao_equipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+            <PropertyRef Name="id_intervencao" />
+          </Key>
+          <Property Name="codigo_equipa" Type="Int32" Nullable="false" />
+          <Property Name="id_intervencao" Type="Int32" Nullable="false" />
+          <Property Name="data_inicio" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="equipa" Relationship="Self.FK__intervenc__codig__3E5D3103" FromRole="intervencao_equipa" ToRole="equipa" />
+          <NavigationProperty Name="intervencao" Relationship="Self.FK__intervenc__id_in__3F51553C" FromRole="intervencao_equipa" ToRole="intervencao" />
+        </EntityType>
+        <EntityType Name="tipo_activo">
+          <Key>
+            <PropertyRef Name="id_tipo" />
+          </Key>
+          <Property Name="id_tipo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="description" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="activoes" Relationship="Self.FK__activo__tipo__1FD8A9E3" FromRole="tipo_activo" ToRole="activo" />
+        </EntityType>
+        <EntityType Name="IntervencoesPorEquipa">
+          <Key>
+            <PropertyRef Name="codigo_equipa" />
+            <PropertyRef Name="num_elems" />
+          </Key>
+          <Property Name="codigo_equipa" Type="Int32" Nullable="false" />
+          <Property Name="num_elems" Type="Int32" Nullable="false" />
+          <Property Name="intervencoes_atribuidas" Type="Int32" />
+        </EntityType>
+        <EntityType Name="vw_Resumo_Intervencao">
+          <Key>
+            <PropertyRef Name="id_intervencao" />
+            <PropertyRef Name="descricao" />
+            <PropertyRef Name="estado" />
+            <PropertyRef Name="valor" />
+            <PropertyRef Name="data_inicio" />
+            <PropertyRef Name="data_fim" />
+            <PropertyRef Name="nome_activo" />
+          </Key>
+          <Property Name="id_intervencao" Type="Int32" Nullable="false" />
+          <Property Name="descricao" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="valor" Type="Double" Nullable="false" />
+          <Property Name="data_inicio" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="data_fim" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="nome_activo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="marca_activo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="modelo_activo" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK__activo__tipo__1FD8A9E3">
+          <End Role="tipo_activo" Type="Self.tipo_activo" Multiplicity="0..1" />
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tipo_activo">
+              <PropertyRef Name="id_tipo" />
+            </Principal>
+            <Dependent Role="activo">
+              <PropertyRef Name="tipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__activo_pr__id_ac__22B5168E">
+          <End Role="activo" Type="Self.activo" Multiplicity="1" />
+          <End Role="activo_preçocomercial" Type="Self.activo_preçocomercial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="activo_preçocomercial">
+              <PropertyRef Name="id_activo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__id_ac__35C7EB02">
+          <End Role="activo" Type="Self.activo" Multiplicity="0..1" />
+          <End Role="intervencao" Type="Self.intervencao" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="activo">
+              <PropertyRef Name="activo_id" />
+            </Principal>
+            <Dependent Role="intervencao">
+              <PropertyRef Name="id_activo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__codig__3E5D3103">
+          <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
+          <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Principal>
+            <Dependent Role="intervencao_equipa">
+              <PropertyRef Name="codigo_equipa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__id_in__3F51553C">
+          <End Role="intervencao" Type="Self.intervencao" Multiplicity="1" />
+          <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="intervencao">
+              <PropertyRef Name="id_intervencao" />
+            </Principal>
+            <Dependent Role="intervencao_equipa">
+              <PropertyRef Name="id_intervencao" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="activo_filho">
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <End Role="activo1" Type="Self.activo" Multiplicity="*" />
+        </Association>
+        <Association Name="activo_gerente">
+          <End Role="activo" Type="Self.activo" Multiplicity="*" />
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="*" />
+        </Association>
+        <Association Name="funcionario_competencia">
+          <End Role="competencia" Type="Self.competencia" Multiplicity="*" />
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="*" />
+        </Association>
+        <Association Name="funcionario_equipa">
+          <End Role="equipa" Type="Self.equipa" Multiplicity="*" />
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="Project1Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="activoes" EntityType="Self.activo" />
+          <EntitySet Name="activo_preçocomercial" EntityType="Self.activo_preçocomercial" />
+          <EntitySet Name="competencias" EntityType="Self.competencia" />
+          <EntitySet Name="equipas" EntityType="Self.equipa" />
+          <EntitySet Name="funcionarios" EntityType="Self.funcionario" />
+          <EntitySet Name="intervencaos" EntityType="Self.intervencao" />
+          <EntitySet Name="intervencao_equipa" EntityType="Self.intervencao_equipa" />
+          <EntitySet Name="tipo_activo" EntityType="Self.tipo_activo" />
+          <EntitySet Name="IntervencoesPorEquipas" EntityType="Self.IntervencoesPorEquipa" />
+          <EntitySet Name="vw_Resumo_Intervencao" EntityType="Self.vw_Resumo_Intervencao" />
+          <AssociationSet Name="FK__activo__tipo__1FD8A9E3" Association="Self.FK__activo__tipo__1FD8A9E3">
+            <End Role="tipo_activo" EntitySet="tipo_activo" />
+            <End Role="activo" EntitySet="activoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__activo_pr__id_ac__22B5168E" Association="Self.FK__activo_pr__id_ac__22B5168E">
+            <End Role="activo" EntitySet="activoes" />
+            <End Role="activo_preçocomercial" EntitySet="activo_preçocomercial" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__id_ac__35C7EB02" Association="Self.FK__intervenc__id_ac__35C7EB02">
+            <End Role="activo" EntitySet="activoes" />
+            <End Role="intervencao" EntitySet="intervencaos" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__codig__3E5D3103" Association="Self.FK__intervenc__codig__3E5D3103">
+            <End Role="equipa" EntitySet="equipas" />
+            <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__id_in__3F51553C" Association="Self.FK__intervenc__id_in__3F51553C">
+            <End Role="intervencao" EntitySet="intervencaos" />
+            <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+          </AssociationSet>
+          <AssociationSet Name="activo_filho" Association="Self.activo_filho">
+            <End Role="activo" EntitySet="activoes" />
+            <End Role="activo1" EntitySet="activoes" />
+          </AssociationSet>
+          <AssociationSet Name="activo_gerente" Association="Self.activo_gerente">
+            <End Role="activo" EntitySet="activoes" />
+            <End Role="funcionario" EntitySet="funcionarios" />
+          </AssociationSet>
+          <AssociationSet Name="funcionario_competencia" Association="Self.funcionario_competencia">
+            <End Role="competencia" EntitySet="competencias" />
+            <End Role="funcionario" EntitySet="funcionarios" />
+          </AssociationSet>
+          <AssociationSet Name="funcionario_equipa" Association="Self.funcionario_equipa">
+            <End Role="equipa" EntitySet="equipas" />
+            <End Role="funcionario" EntitySet="funcionarios" />
+          </AssociationSet>
+          <FunctionImport Name="f_listIntervention" IsComposable="true" ReturnType="Collection(Project1Model.f_listIntervention_Result)">
+            <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
+            <Parameter Name="year" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="f_listInterventionsOfYear" IsComposable="true" ReturnType="Collection(Project1Model.f_listInterventionsOfYear_Result)">
+            <Parameter Name="ano" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_actualizaInformacaoFuncionario">
+            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+            <Parameter Name="endereco" Mode="In" Type="String" />
+            <Parameter Name="profissao" Mode="In" Type="String" />
+            <Parameter Name="telefone" Mode="In" Type="Int32" />
+            <Parameter Name="email" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="p_adicionarCompetencias">
+            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+            <Parameter Name="id_competencia" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_adicionarElementoEquipa">
+            <Parameter Name="id_equipa" Mode="In" Type="Int32" />
+            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_criaEquipa">
+            <Parameter Name="localizacao" Mode="In" Type="String" />
+            <Parameter Name="id_supervisor" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_criaIntervencao" ReturnType="Collection(Decimal)">
+            <Parameter Name="id_activo" Mode="In" Type="Int32" />
+            <Parameter Name="descricao" Mode="In" Type="String" />
+            <Parameter Name="valor" Mode="In" Type="Double" />
+            <Parameter Name="data_inicio" Mode="In" Type="DateTime" />
+            <Parameter Name="data_fim" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="p_eliminarEquipa">
+            <Parameter Name="id_equipa" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_inserirFuncionario">
+            <Parameter Name="numero_identificacao" Mode="In" Type="Int32" />
+            <Parameter Name="nome" Mode="In" Type="String" />
+            <Parameter Name="data_nascimento" Mode="In" Type="DateTime" />
+            <Parameter Name="endereco" Mode="In" Type="String" />
+            <Parameter Name="profissao" Mode="In" Type="String" />
+            <Parameter Name="telefone" Mode="In" Type="Int32" />
+            <Parameter Name="email" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="p_removerElementoEquipa">
+            <Parameter Name="id_equipa" Mode="In" Type="Int32" />
+            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_removerFuncionario">
+            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="p_updateInter">
+            <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
+            <Parameter Name="estado" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Project1ModelStoreContainer" CdmEntityContainer="Project1Entities">
+          <EntitySetMapping Name="activoes">
+            <EntityTypeMapping TypeName="Project1Model.activo">
+              <MappingFragment StoreEntitySet="activo">
+                <ScalarProperty Name="activo_id" ColumnName="activo_id" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="data_aquisicao" ColumnName="data_aquisicao" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="marca" ColumnName="marca" />
+                <ScalarProperty Name="modelo" ColumnName="modelo" />
+                <ScalarProperty Name="tipo" ColumnName="tipo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="activo_preçocomercial">
+            <EntityTypeMapping TypeName="Project1Model.activo_preçocomercial">
+              <MappingFragment StoreEntitySet="activo_preçocomercial">
+                <ScalarProperty Name="id_activo" ColumnName="id_activo" />
+                <ScalarProperty Name="preco" ColumnName="preco" />
+                <ScalarProperty Name="data_alteracao" ColumnName="data_alteracao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="competencias">
+            <EntityTypeMapping TypeName="Project1Model.competencia">
+              <MappingFragment StoreEntitySet="competencia">
+                <ScalarProperty Name="id_competencia" ColumnName="id_competencia" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="equipas">
+            <EntityTypeMapping TypeName="Project1Model.equipa">
+              <MappingFragment StoreEntitySet="equipa">
+                <ScalarProperty Name="codigo_equipa" ColumnName="codigo_equipa" />
+                <ScalarProperty Name="localizacao" ColumnName="localizacao" />
+                <ScalarProperty Name="num_elems" ColumnName="num_elems" />
+                <ScalarProperty Name="id_supervisor" ColumnName="id_supervisor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="funcionarios">
+            <EntityTypeMapping TypeName="Project1Model.funcionario">
+              <MappingFragment StoreEntitySet="funcionario">
+                <ScalarProperty Name="id_funcionario" ColumnName="id_funcionario" />
+                <ScalarProperty Name="numero_identificacao" ColumnName="numero_identificacao" />
+                <ScalarProperty Name="nome" ColumnName="nome" />
+                <ScalarProperty Name="data_nascimento" ColumnName="data_nascimento" />
+                <ScalarProperty Name="endereco" ColumnName="endereco" />
+                <ScalarProperty Name="profissao" ColumnName="profissao" />
+                <ScalarProperty Name="telefone" ColumnName="telefone" />
+                <ScalarProperty Name="email" ColumnName="email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="intervencaos">
+            <EntityTypeMapping TypeName="Project1Model.intervencao">
+              <MappingFragment StoreEntitySet="intervencao">
+                <ScalarProperty Name="id_intervencao" ColumnName="id_intervencao" />
+                <ScalarProperty Name="id_activo" ColumnName="id_activo" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="data_inicio" ColumnName="data_inicio" />
+                <ScalarProperty Name="data_fim" ColumnName="data_fim" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="intervencao_equipa">
+            <EntityTypeMapping TypeName="Project1Model.intervencao_equipa">
+              <MappingFragment StoreEntitySet="intervencao_equipa">
+                <ScalarProperty Name="codigo_equipa" ColumnName="codigo_equipa" />
+                <ScalarProperty Name="id_intervencao" ColumnName="id_intervencao" />
+                <ScalarProperty Name="data_inicio" ColumnName="data_inicio" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tipo_activo">
+            <EntityTypeMapping TypeName="Project1Model.tipo_activo">
+              <MappingFragment StoreEntitySet="tipo_activo">
+                <ScalarProperty Name="id_tipo" ColumnName="id_tipo" />
+                <ScalarProperty Name="description" ColumnName="description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="IntervencoesPorEquipas">
+            <EntityTypeMapping TypeName="Project1Model.IntervencoesPorEquipa">
+              <MappingFragment StoreEntitySet="IntervencoesPorEquipa">
+                <ScalarProperty Name="codigo_equipa" ColumnName="codigo_equipa" />
+                <ScalarProperty Name="num_elems" ColumnName="num_elems" />
+                <ScalarProperty Name="intervencoes_atribuidas" ColumnName="intervencoes_atribuidas" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vw_Resumo_Intervencao">
+            <EntityTypeMapping TypeName="Project1Model.vw_Resumo_Intervencao">
+              <MappingFragment StoreEntitySet="vw_Resumo_Intervencao">
+                <ScalarProperty Name="id_intervencao" ColumnName="id_intervencao" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+                <ScalarProperty Name="estado" ColumnName="estado" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="data_inicio" ColumnName="data_inicio" />
+                <ScalarProperty Name="data_fim" ColumnName="data_fim" />
+                <ScalarProperty Name="nome_activo" ColumnName="nome_activo" />
+                <ScalarProperty Name="marca_activo" ColumnName="marca_activo" />
+                <ScalarProperty Name="modelo_activo" ColumnName="modelo_activo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="activo_filho" TypeName="Project1Model.activo_filho" StoreEntitySet="activo_filho">
+            <EndProperty Name="activo">
+              <ScalarProperty Name="activo_id" ColumnName="id_activo_pai" />
+            </EndProperty>
+            <EndProperty Name="activo1">
+              <ScalarProperty Name="activo_id" ColumnName="id_activo_filho" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="activo_gerente" TypeName="Project1Model.activo_gerente" StoreEntitySet="activo_gerente">
+            <EndProperty Name="activo">
+              <ScalarProperty Name="activo_id" ColumnName="id_activo" />
+            </EndProperty>
+            <EndProperty Name="funcionario">
+              <ScalarProperty Name="id_funcionario" ColumnName="id_gerente" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="funcionario_competencia" TypeName="Project1Model.funcionario_competencia" StoreEntitySet="funcionario_competencia">
+            <EndProperty Name="competencia">
+              <ScalarProperty Name="id_competencia" ColumnName="id_competencia" />
+            </EndProperty>
+            <EndProperty Name="funcionario">
+              <ScalarProperty Name="id_funcionario" ColumnName="id_funcionario" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="funcionario_equipa" TypeName="Project1Model.funcionario_equipa" StoreEntitySet="funcionario_equipa">
+            <EndProperty Name="equipa">
+              <ScalarProperty Name="codigo_equipa" ColumnName="codigo_equipa" />
+            </EndProperty>
+            <EndProperty Name="funcionario">
+              <ScalarProperty Name="id_funcionario" ColumnName="id_funcionario" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionName="Project1Model.Store.f_listIntervention" FunctionImportName="f_listIntervention">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Project1Model.f_listIntervention_Result">
+                <ScalarProperty Name="id_intervencao" ColumnName="id_intervencao" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionName="Project1Model.Store.f_listInterventionsOfYear" FunctionImportName="f_listInterventionsOfYear">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Project1Model.f_listInterventionsOfYear_Result">
+                <ScalarProperty Name="id_intervencao" ColumnName="id_intervencao" />
+                <ScalarProperty Name="descricao" ColumnName="descricao" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="p_actualizaInformacaoFuncionario" FunctionName="Project1Model.Store.p_actualizaInformacaoFuncionario" />
+          <FunctionImportMapping FunctionImportName="p_adicionarCompetencias" FunctionName="Project1Model.Store.p_adicionarCompetencias" />
+          <FunctionImportMapping FunctionImportName="p_adicionarElementoEquipa" FunctionName="Project1Model.Store.p_adicionarElementoEquipa" />
+          <FunctionImportMapping FunctionImportName="p_criaEquipa" FunctionName="Project1Model.Store.p_criaEquipa" />
+          <FunctionImportMapping FunctionImportName="p_criaIntervencao" FunctionName="Project1Model.Store.p_criaIntervencao" />
+          <FunctionImportMapping FunctionImportName="p_eliminarEquipa" FunctionName="Project1Model.Store.p_eliminarEquipa" />
+          <FunctionImportMapping FunctionImportName="p_inserirFuncionario" FunctionName="Project1Model.Store.p_inserirFuncionario" />
+          <FunctionImportMapping FunctionImportName="p_removerElementoEquipa" FunctionName="Project1Model.Store.p_removerElementoEquipa" />
+          <FunctionImportMapping FunctionImportName="p_removerFuncionario" FunctionName="Project1Model.Store.p_removerFuncionario" />
+          <FunctionImportMapping FunctionImportName="p_updateInter" FunctionName="Project1Model.Store.p_updateInter" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -82,7 +82,7 @@ class Program
                 }
             }
 
-            Equipa equipa = (Equipa)equipaMapper.ReadTeamWithQualifications(intervencaoId);
+            EquipaProxy equipa = (EquipaProxy)equipaMapper.ReadTeamWithQualifications(intervencaoId);
             if (equipa == null)
             {
                 Console.WriteLine("Não existe nenhuma equipa com essas capacidades/disponivel");
@@ -220,6 +220,7 @@ class Program
                 equipa.localizacao = localizacao;
                 equipa.id_supervisor = idSupervisor;
                 equipa = equipaMapper.Create(equipa);
+                equipa = equipaMapper.Read(equipa.codigo_equipa);
                 printTeam((Equipa)equipa);
             }
         }catch(SqlException ex)
@@ -552,7 +553,7 @@ class Program
 
                 Console.WriteLine("Equipa: " + equipa.codigo_equipa);
                 Console.WriteLine("Intervenções:");
-                foreach (Intervencao i in equipa.intervencoes)
+                foreach (Intervencao i in equipa.Intervencoes)
                 {
                     Console.WriteLine("Id da Intervenção: " + i.id_intervencao + " Descrição : " + i.descricao);
                 }

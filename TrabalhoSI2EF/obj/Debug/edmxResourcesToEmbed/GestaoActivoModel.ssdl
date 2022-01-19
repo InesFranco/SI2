@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Project1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="activo">
+    <Key>
+      <PropertyRef Name="activo_id" />
+    </Key>
+    <Property Name="activo_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nome" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="data_aquisicao" Type="date" Nullable="false" />
+    <Property Name="estado" Type="bit" Nullable="false" />
+    <Property Name="marca" Type="varchar" MaxLength="20" />
+    <Property Name="modelo" Type="varchar" MaxLength="20" />
+    <Property Name="tipo" Type="int" />
+  </EntityType>
+  <EntityType Name="activo_filho">
+    <Key>
+      <PropertyRef Name="id_activo_pai" />
+      <PropertyRef Name="id_activo_filho" />
+    </Key>
+    <Property Name="id_activo_pai" Type="int" Nullable="false" />
+    <Property Name="id_activo_filho" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="activo_gerente">
+    <Key>
+      <PropertyRef Name="id_activo" />
+      <PropertyRef Name="id_gerente" />
+    </Key>
+    <Property Name="id_activo" Type="int" Nullable="false" />
+    <Property Name="id_gerente" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="activo_preçocomercial">
+    <Key>
+      <PropertyRef Name="id_activo" />
+      <PropertyRef Name="data_alteracao" />
+    </Key>
+    <Property Name="id_activo" Type="int" Nullable="false" />
+    <Property Name="preco" Type="float" Nullable="false" />
+    <Property Name="data_alteracao" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityType Name="competencia">
+    <Key>
+      <PropertyRef Name="id_competencia" />
+    </Key>
+    <Property Name="id_competencia" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <EntityType Name="equipa">
+    <Key>
+      <PropertyRef Name="codigo_equipa" />
+    </Key>
+    <Property Name="codigo_equipa" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="localizacao" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="num_elems" Type="int" Nullable="false" />
+    <Property Name="id_supervisor" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="funcionario">
+    <Key>
+      <PropertyRef Name="id_funcionario" />
+    </Key>
+    <Property Name="id_funcionario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="numero_identificacao" Type="int" Nullable="false" />
+    <Property Name="nome" Type="varchar" MaxLength="50" />
+    <Property Name="data_nascimento" Type="date" />
+    <Property Name="endereco" Type="varchar" MaxLength="50" />
+    <Property Name="profissao" Type="varchar" MaxLength="50" />
+    <Property Name="telefone" Type="int" />
+    <Property Name="email" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="funcionario_competencia">
+    <Key>
+      <PropertyRef Name="id_funcionario" />
+      <PropertyRef Name="id_competencia" />
+    </Key>
+    <Property Name="id_funcionario" Type="int" Nullable="false" />
+    <Property Name="id_competencia" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="funcionario_equipa">
+    <Key>
+      <PropertyRef Name="id_funcionario" />
+      <PropertyRef Name="codigo_equipa" />
+    </Key>
+    <Property Name="id_funcionario" Type="int" Nullable="false" />
+    <Property Name="codigo_equipa" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="intervencao">
+    <Key>
+      <PropertyRef Name="id_intervencao" />
+    </Key>
+    <Property Name="id_intervencao" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="id_activo" Type="int" />
+    <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="estado" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="valor" Type="float" Nullable="false" />
+    <Property Name="data_inicio" Type="date" Nullable="false" />
+    <Property Name="data_fim" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityType Name="intervencao_equipa">
+    <Key>
+      <PropertyRef Name="codigo_equipa" />
+      <PropertyRef Name="id_intervencao" />
+    </Key>
+    <Property Name="codigo_equipa" Type="int" Nullable="false" />
+    <Property Name="id_intervencao" Type="int" Nullable="false" />
+    <Property Name="data_inicio" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tipo_activo">
+    <Key>
+      <PropertyRef Name="id_tipo" />
+    </Key>
+    <Property Name="id_tipo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="description" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Project1.dbo.IntervencoesPorEquipa' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="IntervencoesPorEquipa">
+    <Key>
+      <PropertyRef Name="codigo_equipa" />
+      <PropertyRef Name="num_elems" />
+    </Key>
+    <Property Name="codigo_equipa" Type="int" Nullable="false" />
+    <Property Name="num_elems" Type="int" Nullable="false" />
+    <Property Name="intervencoes_atribuidas" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="vw_Resumo_Intervencao">
+    <Key>
+      <PropertyRef Name="id_intervencao" />
+      <PropertyRef Name="descricao" />
+      <PropertyRef Name="estado" />
+      <PropertyRef Name="valor" />
+      <PropertyRef Name="data_inicio" />
+      <PropertyRef Name="data_fim" />
+      <PropertyRef Name="nome_activo" />
+    </Key>
+    <Property Name="id_intervencao" Type="int" Nullable="false" />
+    <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="estado" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="valor" Type="float" Nullable="false" />
+    <Property Name="data_inicio" Type="date" Nullable="false" />
+    <Property Name="data_fim" Type="date" Nullable="false" />
+    <Property Name="nome_activo" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="marca_activo" Type="varchar" MaxLength="20" />
+    <Property Name="modelo_activo" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <Association Name="FK__activo__tipo__1FD8A9E3">
+    <End Role="tipo_activo" Type="Self.tipo_activo" Multiplicity="0..1" />
+    <End Role="activo" Type="Self.activo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tipo_activo">
+        <PropertyRef Name="id_tipo" />
+      </Principal>
+      <Dependent Role="activo">
+        <PropertyRef Name="tipo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__activo_fi__id_ac__25918339">
+    <End Role="activo" Type="Self.activo" Multiplicity="1" />
+    <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activo">
+        <PropertyRef Name="activo_id" />
+      </Principal>
+      <Dependent Role="activo_filho">
+        <PropertyRef Name="id_activo_pai" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__activo_fi__id_ac__2685A772">
+    <End Role="activo" Type="Self.activo" Multiplicity="1" />
+    <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activo">
+        <PropertyRef Name="activo_id" />
+      </Principal>
+      <Dependent Role="activo_filho">
+        <PropertyRef Name="id_activo_filho" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__activo_ge__id_ac__2C3E80C8">
+    <End Role="activo" Type="Self.activo" Multiplicity="1" />
+    <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activo">
+        <PropertyRef Name="activo_id" />
+      </Principal>
+      <Dependent Role="activo_gerente">
+        <PropertyRef Name="id_activo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__activo_ge__id_ge__2D32A501">
+    <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+    <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="funcionario">
+        <PropertyRef Name="id_funcionario" />
+      </Principal>
+      <Dependent Role="activo_gerente">
+        <PropertyRef Name="id_gerente" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__activo_pr__id_ac__22B5168E">
+    <End Role="activo" Type="Self.activo" Multiplicity="1" />
+    <End Role="activo_preçocomercial" Type="Self.activo_preçocomercial" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activo">
+        <PropertyRef Name="activo_id" />
+      </Principal>
+      <Dependent Role="activo_preçocomercial">
+        <PropertyRef Name="id_activo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__funcionar__codig__3B80C458">
+    <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
+    <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="equipa">
+        <PropertyRef Name="codigo_equipa" />
+      </Principal>
+      <Dependent Role="funcionario_equipa">
+        <PropertyRef Name="codigo_equipa" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__funcionar__id_co__31F75A1E">
+    <End Role="competencia" Type="Self.competencia" Multiplicity="1" />
+    <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="competencia">
+        <PropertyRef Name="id_competencia" />
+      </Principal>
+      <Dependent Role="funcionario_competencia">
+        <PropertyRef Name="id_competencia" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__funcionar__id_fu__32EB7E57">
+    <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+    <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="funcionario">
+        <PropertyRef Name="id_funcionario" />
+      </Principal>
+      <Dependent Role="funcionario_competencia">
+        <PropertyRef Name="id_funcionario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__funcionar__id_fu__3A8CA01F">
+    <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+    <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="funcionario">
+        <PropertyRef Name="id_funcionario" />
+      </Principal>
+      <Dependent Role="funcionario_equipa">
+        <PropertyRef Name="id_funcionario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__intervenc__codig__3E5D3103">
+    <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
+    <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="equipa">
+        <PropertyRef Name="codigo_equipa" />
+      </Principal>
+      <Dependent Role="intervencao_equipa">
+        <PropertyRef Name="codigo_equipa" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__intervenc__id_ac__35C7EB02">
+    <End Role="activo" Type="Self.activo" Multiplicity="0..1" />
+    <End Role="intervencao" Type="Self.intervencao" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="activo">
+        <PropertyRef Name="activo_id" />
+      </Principal>
+      <Dependent Role="intervencao">
+        <PropertyRef Name="id_activo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__intervenc__id_in__3F51553C">
+    <End Role="intervencao" Type="Self.intervencao" Multiplicity="1" />
+    <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="intervencao">
+        <PropertyRef Name="id_intervencao" />
+      </Principal>
+      <Dependent Role="intervencao_equipa">
+        <PropertyRef Name="id_intervencao" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="encontrarEquipaParaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+    <Parameter Name="id_intervencao" Type="int" Mode="In" />
+  </Function>
+  <Function Name="f_listIntervention" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_intervencao" Type="int" Mode="In" />
+    <Parameter Name="year" Type="int" Mode="In" />
+    <ReturnType>
+      <CollectionType>
+        <RowType>
+          <Property Name="id_intervencao" Type="int" Nullable="false" />
+          <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+        </RowType>
+      </CollectionType>
+    </ReturnType>
+  </Function>
+  <Function Name="f_listInterventionsOfYear" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="ano" Type="int" Mode="In" />
+    <ReturnType>
+      <CollectionType>
+        <RowType>
+          <Property Name="id_intervencao" Type="int" Nullable="false" />
+          <Property Name="descricao" Type="varchar" MaxLength="50" Nullable="false" />
+        </RowType>
+      </CollectionType>
+    </ReturnType>
+  </Function>
+  <Function Name="p_actualizaInformacaoFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+    <Parameter Name="endereco" Type="varchar" Mode="In" />
+    <Parameter Name="profissao" Type="varchar" Mode="In" />
+    <Parameter Name="telefone" Type="int" Mode="In" />
+    <Parameter Name="email" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="p_adicionarCompetencias" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+    <Parameter Name="id_competencia" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_adicionarElementoEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_equipa" Type="int" Mode="In" />
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_criaEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="localizacao" Type="varchar" Mode="In" />
+    <Parameter Name="id_supervisor" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_criaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_activo" Type="int" Mode="In" />
+    <Parameter Name="descricao" Type="varchar" Mode="In" />
+    <Parameter Name="valor" Type="float" Mode="In" />
+    <Parameter Name="data_inicio" Type="date" Mode="In" />
+    <Parameter Name="data_fim" Type="date" Mode="In" />
+  </Function>
+  <Function Name="p_eliminarEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_equipa" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_encontrarEquipaParaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
+    <Parameter Name="id_intervencao" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_inserirFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="numero_identificacao" Type="int" Mode="In" />
+    <Parameter Name="nome" Type="varchar" Mode="In" />
+    <Parameter Name="data_nascimento" Type="date" Mode="In" />
+    <Parameter Name="endereco" Type="varchar" Mode="In" />
+    <Parameter Name="profissao" Type="varchar" Mode="In" />
+    <Parameter Name="telefone" Type="int" Mode="In" />
+    <Parameter Name="email" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="p_removerElementoEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_equipa" Type="int" Mode="In" />
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_removerFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+  </Function>
+  <Function Name="p_updateInter" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="id_intervencao" Type="int" Mode="In" />
+    <Parameter Name="estado" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="verificarCompetenciasEquipa" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+    <Parameter Name="id_equipa" Type="int" Mode="In" />
+    <Parameter Name="competenciaNecessaria" Type="varchar" Mode="In" />
+    <Parameter Name="id_activo" Type="int" Mode="In" />
+  </Function>
+  <Function Name="verificarCompetenciasFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="bit">
+    <Parameter Name="id_funcionario" Type="int" Mode="In" />
+    <Parameter Name="competenciaNecessaria" Type="varchar" Mode="In" />
+  </Function>
+  <EntityContainer Name="Project1ModelStoreContainer">
+    <EntitySet Name="activo" EntityType="Self.activo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="activo_filho" EntityType="Self.activo_filho" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="activo_gerente" EntityType="Self.activo_gerente" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="activo_preçocomercial" EntityType="Self.activo_preçocomercial" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="competencia" EntityType="Self.competencia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="equipa" EntityType="Self.equipa" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="funcionario" EntityType="Self.funcionario" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="funcionario_competencia" EntityType="Self.funcionario_competencia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="funcionario_equipa" EntityType="Self.funcionario_equipa" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="intervencao" EntityType="Self.intervencao" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="intervencao_equipa" EntityType="Self.intervencao_equipa" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tipo_activo" EntityType="Self.tipo_activo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="IntervencoesPorEquipa" EntityType="Self.IntervencoesPorEquipa" store:Type="Views" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [IntervencoesPorEquipa].[codigo_equipa] AS [codigo_equipa], 
+    [IntervencoesPorEquipa].[num_elems] AS [num_elems], 
+    [IntervencoesPorEquipa].[intervencoes_atribuidas] AS [intervencoes_atribuidas]
+    FROM [dbo].[IntervencoesPorEquipa] AS [IntervencoesPorEquipa]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vw_Resumo_Intervencao" EntityType="Self.vw_Resumo_Intervencao" store:Type="Views" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [vw_Resumo_Intervencao].[id_intervencao] AS [id_intervencao], 
+    [vw_Resumo_Intervencao].[descricao] AS [descricao], 
+    [vw_Resumo_Intervencao].[estado] AS [estado], 
+    [vw_Resumo_Intervencao].[valor] AS [valor], 
+    [vw_Resumo_Intervencao].[data_inicio] AS [data_inicio], 
+    [vw_Resumo_Intervencao].[data_fim] AS [data_fim], 
+    [vw_Resumo_Intervencao].[nome_activo] AS [nome_activo], 
+    [vw_Resumo_Intervencao].[marca_activo] AS [marca_activo], 
+    [vw_Resumo_Intervencao].[modelo_activo] AS [modelo_activo]
+    FROM [dbo].[vw_Resumo_Intervencao] AS [vw_Resumo_Intervencao]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK__activo__tipo__1FD8A9E3" Association="Self.FK__activo__tipo__1FD8A9E3">
+      <End Role="tipo_activo" EntitySet="tipo_activo" />
+      <End Role="activo" EntitySet="activo" />
+    </AssociationSet>
+    <AssociationSet Name="FK__activo_fi__id_ac__25918339" Association="Self.FK__activo_fi__id_ac__25918339">
+      <End Role="activo" EntitySet="activo" />
+      <End Role="activo_filho" EntitySet="activo_filho" />
+    </AssociationSet>
+    <AssociationSet Name="FK__activo_fi__id_ac__2685A772" Association="Self.FK__activo_fi__id_ac__2685A772">
+      <End Role="activo" EntitySet="activo" />
+      <End Role="activo_filho" EntitySet="activo_filho" />
+    </AssociationSet>
+    <AssociationSet Name="FK__activo_ge__id_ac__2C3E80C8" Association="Self.FK__activo_ge__id_ac__2C3E80C8">
+      <End Role="activo" EntitySet="activo" />
+      <End Role="activo_gerente" EntitySet="activo_gerente" />
+    </AssociationSet>
+    <AssociationSet Name="FK__activo_ge__id_ge__2D32A501" Association="Self.FK__activo_ge__id_ge__2D32A501">
+      <End Role="funcionario" EntitySet="funcionario" />
+      <End Role="activo_gerente" EntitySet="activo_gerente" />
+    </AssociationSet>
+    <AssociationSet Name="FK__activo_pr__id_ac__22B5168E" Association="Self.FK__activo_pr__id_ac__22B5168E">
+      <End Role="activo" EntitySet="activo" />
+      <End Role="activo_preçocomercial" EntitySet="activo_preçocomercial" />
+    </AssociationSet>
+    <AssociationSet Name="FK__funcionar__codig__3B80C458" Association="Self.FK__funcionar__codig__3B80C458">
+      <End Role="equipa" EntitySet="equipa" />
+      <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
+    </AssociationSet>
+    <AssociationSet Name="FK__funcionar__id_co__31F75A1E" Association="Self.FK__funcionar__id_co__31F75A1E">
+      <End Role="competencia" EntitySet="competencia" />
+      <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
+    </AssociationSet>
+    <AssociationSet Name="FK__funcionar__id_fu__32EB7E57" Association="Self.FK__funcionar__id_fu__32EB7E57">
+      <End Role="funcionario" EntitySet="funcionario" />
+      <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
+    </AssociationSet>
+    <AssociationSet Name="FK__funcionar__id_fu__3A8CA01F" Association="Self.FK__funcionar__id_fu__3A8CA01F">
+      <End Role="funcionario" EntitySet="funcionario" />
+      <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
+    </AssociationSet>
+    <AssociationSet Name="FK__intervenc__codig__3E5D3103" Association="Self.FK__intervenc__codig__3E5D3103">
+      <End Role="equipa" EntitySet="equipa" />
+      <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+    </AssociationSet>
+    <AssociationSet Name="FK__intervenc__id_ac__35C7EB02" Association="Self.FK__intervenc__id_ac__35C7EB02">
+      <End Role="activo" EntitySet="activo" />
+      <End Role="intervencao" EntitySet="intervencao" />
+    </AssociationSet>
+    <AssociationSet Name="FK__intervenc__id_in__3F51553C" Association="Self.FK__intervenc__id_in__3F51553C">
+      <End Role="intervencao" EntitySet="intervencao" />
+      <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

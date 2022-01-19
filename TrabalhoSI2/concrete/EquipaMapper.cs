@@ -34,14 +34,53 @@ namespace TrabalhoSI2.mapper
             {
                 throw;
             }
+            return new EquipaProxy((Equipa)entity, _ctx);
+        }
 
+        public List<Funcionario> LoadTeamMembers(IEquipa equipa)
+        {
             //Add supervisor as team member
             FuncionarioMapper funcionarioMapper = new FuncionarioMapper(_ctx);
-            Funcionario funcionario = funcionarioMapper.Read(entity.id_supervisor);
 
-            entity.TeamMembers.Add(funcionario);
-            return entity;
+            SqlCommand cmd = _ctx.createCommand();
+            cmd.CommandText = "select id_funcionario from funcionario_equipa where @codigo_equipa=codigo_equipa";
+            cmd.Parameters.Add(new SqlParameter("@codigo_equipa", equipa.codigo_equipa));
+
+            List<Funcionario> teamMembers = new List<Funcionario>();
+
+            using (IDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    teamMembers.Add(funcionarioMapper.Read(reader.GetInt32(0)));
+                }
+            }
+                
+            return teamMembers;
         }
+
+
+        public List<Intervencao> LoadInterventions(IEquipa equipa)
+        {
+            //Add all the interventions assigned to this team
+            SqlCommand cmd = _ctx.createCommand();
+            cmd.CommandText = "select id_intervencao from intervencao_equipa where @codigo_equipa=codigo_equipa";
+            cmd.Parameters.Add(new SqlParameter("@codigo_equipa", equipa.codigo_equipa));
+
+            List<Intervencao> intervencoes = new List<Intervencao>();
+
+            using (SqlDataReader dr = cmd.ExecuteReader())
+            {
+                IntervencaoMapper intervencaoMapper = new IntervencaoMapper(_ctx);
+                while (dr.Read())
+                {
+                    intervencoes.Add(intervencaoMapper.Read(dr.GetInt32(0)));
+                }
+            }
+            return intervencoes;
+
+        }
+
 
         public IEquipa Delete(IEquipa entity)
         {
@@ -72,39 +111,9 @@ namespace TrabalhoSI2.mapper
                 new IDbDataParameter[] {
                     new SqlParameter("@codigo_equipa", id)
                 }, EquipaMap);
-                if (equipa != null)
-                {
-                    //Add all the team members
-                    SqlCommand cmd = _ctx.createCommand();
-                    cmd.CommandText = "select id_funcionario from funcionario_equipa where @codigo_equipa=codigo_equipa";
-                    cmd.Parameters.Add(new SqlParameter("@codigo_equipa", id));
 
-                    using (SqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        FuncionarioMapper funcionarioMapper = new FuncionarioMapper(_ctx);
-                        while (dr.Read())
-                        {
-                            equipa.TeamMembers.Add(funcionarioMapper.Read(dr.GetInt32(0)));
-                        }
-                    }
-
-                    //Add all the interventions assigned to this team
-                    cmd = _ctx.createCommand();
-                    cmd.CommandText = "select id_intervencao from intervencao_equipa where @codigo_equipa=codigo_equipa";
-                    cmd.Parameters.Add(new SqlParameter("@codigo_equipa", id));
-
-                    using (SqlDataReader dr = cmd.ExecuteReader())
-                    {
-                        IntervencaoMapper intervencaoMapper = new IntervencaoMapper(_ctx);
-                        while (dr.Read())
-                        {
-                            equipa.intervencoes.Add(intervencaoMapper.Read(dr.GetInt32(0)));
-                        }
-                    }
-                    return equipa;
-                }
+                return new EquipaProxy((Equipa)equipa, _ctx);
             }
-            
             return null;
         }
 
@@ -167,7 +176,7 @@ namespace TrabalhoSI2.mapper
                 {
                     new SqlParameter("@id_intervencao", Idintervencao) 
                 });
-            return Read(idEquipa);
+            return new EquipaProxy((Equipa)Read(Idintervencao), _ctx);
         }
 
         public IEquipa AssignIntervention(IEquipa equipa, Intervencao intervencao)
@@ -179,7 +188,7 @@ namespace TrabalhoSI2.mapper
                     new SqlParameter("@id_intervencao", intervencao.id_intervencao),
                     new SqlParameter("@data_inicio", intervencao.dataInicio)
                 });
-            return Read(equipa.codigo_equipa);
+            return new EquipaProxy((Equipa)Read(equipa.codigo_equipa), _ctx);
         }
     }
 }

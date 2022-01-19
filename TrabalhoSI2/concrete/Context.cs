@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using TrabalhoSI2.dal;
 
 namespace TrabalhoSI2.concrete
@@ -42,6 +43,14 @@ namespace TrabalhoSI2.concrete
             {
                 con.Dispose();
                 con = null;
+            }
+        }
+
+        public void EnlistTransaction()
+        {
+            if (con != null)
+            {
+                con.EnlistTransaction(Transaction.Current);
             }
         }
 

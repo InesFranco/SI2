@@ -1,0 +1,13 @@
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\TrabalhoSI2EF.exe.config
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\TrabalhoSI2EF.exe
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\TrabalhoSI2EF.pdb
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\EntityFramework.dll
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\EntityFramework.xml
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.csproj.AssemblyReference.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.csproj.SuggestedBindingRedirects.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.csproj.CoreCompileInputs.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.csproj.CopyComplete
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.exe
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2EF\obj\Debug\TrabalhoSI2EF.pdb
