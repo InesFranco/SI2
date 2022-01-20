@@ -58,6 +58,12 @@ class Program
         Console.WriteLine("Localização: " + equipa.localizacao);
         Console.WriteLine("Número de Elementos: " + equipa.num_elems);
         Console.WriteLine("id Supervisor: " + equipa.id_supervisor);
+        foreach(Funcionario member in equipa.TeamMembers)
+        {
+            Console.WriteLine("Membro: " + member.nome);
+            Console.WriteLine("Email: " + member.email);
+            Console.WriteLine("Endereço: " + member.endereco);
+        }
         Console.WriteLine();
     }
 
@@ -230,6 +236,10 @@ class Program
             {
                 Console.WriteLine("O id do supervisor não existe. Tenta outra vez!");
             }
+            else
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         
     }
@@ -299,8 +309,14 @@ class Program
                     Console.WriteLine("Valor Inválido");
                 }
             }
-                    
-            equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
+            try
+            {
+                equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
+            }catch(SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
 
             foreach (Funcionario funcionario in equipa.TeamMembers)
             {
@@ -316,10 +332,10 @@ class Program
         {
             printTeams(10);
 
-            Equipa equipa = new Equipa();
             IEquipaMapper equipaMapper = new EquipaMapper(ctx);
 
             int idFuncionario = - 1;
+            Equipa equipa = new Equipa();
 
             while (true)
             {
@@ -338,15 +354,20 @@ class Program
                 }
             }
 
-            equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
-            equipa = (Equipa)equipaMapper.UpdateRemoveTeamMember(equipa, idFuncionario);
-
-            foreach (Funcionario funcionario in equipa.TeamMembers)
+            try
             {
-                Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
+                
+                equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
+                equipa = (Equipa)equipaMapper.UpdateRemoveTeamMember(equipa, idFuncionario);
+                foreach (Funcionario funcionario in equipa.TeamMembers)
+                {
+                    Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
+                }
             }
-
-
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 

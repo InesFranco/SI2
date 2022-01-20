@@ -23,7 +23,7 @@ namespace TrabalhoSI2.mapper
         {
             try
             {
-                entity.codigo_equipa = SQLMapperHelper.ExecuteScalar<int?>(_ctx, CommandType.StoredProcedure,
+                entity.codigo_equipa = (int)SQLMapperHelper.ExecuteScalar<decimal>(_ctx, CommandType.StoredProcedure,
                 "p_criaEquipa",
                 new IDbDataParameter[]{
                     new SqlParameter("@localizacao", entity.localizacao),
@@ -135,19 +135,19 @@ namespace TrabalhoSI2.mapper
                     new SqlParameter("@id_funcionario", idFuncionario)
 
                 });
-            }catch (Exception ex)
-            {
-                throw;
+                return entity;
             }
-
-
-            Equipa equipa = (Equipa)Read(entity.codigo_equipa);
-            return equipa;
+            catch (Exception ex)
+            {
+                 throw;
+            }
         }
 
         public IEquipa UpdateRemoveTeamMember(IEquipa entity, int idFuncionario)
         {
-            SQLMapperHelper.ExecuteNonQuery(_ctx, CommandType.StoredProcedure, "p_removerElementoEquipa",
+            try
+            {
+                SQLMapperHelper.ExecuteNonQuery(_ctx, CommandType.StoredProcedure, "p_removerElementoEquipa",
                 new IDbDataParameter[]
                 {
                     new SqlParameter("@id_equipa", entity.codigo_equipa),
@@ -155,8 +155,12 @@ namespace TrabalhoSI2.mapper
 
                 });
 
-            Equipa equipa = (Equipa)Read(entity.codigo_equipa);
-            return equipa;
+                return entity;
+            }catch (Exception ex)
+            {
+                throw;
+            }
+            
         }
 
 

@@ -393,8 +393,9 @@ begin try
 
         --adicionar a tabela funcionario equipa
         declare @codigo_equipa int
-        set @codigo_equipa = (select max(codigo_equipa) from equipa)
+        set @codigo_equipa = (select SCOPE_IDENTITY() from equipa)
         insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
+        select SCOPE_IDENTITY()
     commit tran
 end try
 begin catch

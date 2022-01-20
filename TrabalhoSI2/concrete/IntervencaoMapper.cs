@@ -32,7 +32,7 @@ namespace TrabalhoSI2.concrete
                     new SqlParameter("@data_inicio", entity.dataInicio),
                     new SqlParameter("@data_fim", entity.dataFim)
                 }); 
-                return Read(entity.id_intervencao);
+                return entity;
             }
             catch (Exception ex)
             {
