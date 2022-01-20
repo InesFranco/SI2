@@ -1,0 +1,16 @@
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.csproj.AssemblyReference.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.csproj.SuggestedBindingRedirects.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.csproj.CoreCompileInputs.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2_ADO.exe.config
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2_ADO.exe
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2_ADO.pdb
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.exe
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.pdb
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2EF.exe
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\EntityFramework.dll
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2EF.pdb
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\TrabalhoSI2EF.exe.config
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\EntityFramework.xml
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\obj\Debug\TrabalhoSI2_ADO.csproj.CopyComplete
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2_ADO\bin\Debug\EntityFramework.SqlServer.xml

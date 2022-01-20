@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Project1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Project1Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="activo">
           <Key>
             <PropertyRef Name="activo_id" />
@@ -148,7 +148,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
           <Property Name="marca_activo" Type="varchar" MaxLength="20" />
           <Property Name="modelo_activo" Type="varchar" MaxLength="20" />
         </EntityType>
-        <Association Name="FK__activo__tipo__1FD8A9E3">
+        <Association Name="FK__activo__tipo__5FA91635">
           <End Role="tipo_activo" Type="Self.tipo_activo" Multiplicity="0..1" />
           <End Role="activo" Type="Self.activo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -160,7 +160,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_fi__id_ac__25918339">
+        <Association Name="FK__activo_fi__id_ac__6561EF8B">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
           <ReferentialConstraint>
@@ -172,7 +172,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_fi__id_ac__2685A772">
+        <Association Name="FK__activo_fi__id_ac__665613C4">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
           <ReferentialConstraint>
@@ -184,7 +184,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_ge__id_ac__2C3E80C8">
+        <Association Name="FK__activo_ge__id_ac__6C0EED1A">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
           <ReferentialConstraint>
@@ -196,7 +196,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_ge__id_ge__2D32A501">
+        <Association Name="FK__activo_ge__id_ge__6D031153">
           <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
           <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
           <ReferentialConstraint>
@@ -208,7 +208,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_pr__id_ac__22B5168E">
+        <Association Name="FK__activo_pr__id_ac__628582E0">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_preçocomercial" Type="Self.activo_preçocomercial" Multiplicity="*" />
           <ReferentialConstraint>
@@ -220,7 +220,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__codig__3B80C458">
+        <Association Name="FK__funcionar__codig__7B5130AA">
           <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
           <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -232,7 +232,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__id_co__31F75A1E">
+        <Association Name="FK__funcionar__id_co__71C7C670">
           <End Role="competencia" Type="Self.competencia" Multiplicity="1" />
           <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
           <ReferentialConstraint>
@@ -244,7 +244,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__id_fu__32EB7E57">
+        <Association Name="FK__funcionar__id_fu__72BBEAA9">
           <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
           <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
           <ReferentialConstraint>
@@ -256,7 +256,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__id_fu__3A8CA01F">
+        <Association Name="FK__funcionar__id_fu__7A5D0C71">
           <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
           <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -268,7 +268,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__codig__3E5D3103">
+        <Association Name="FK__intervenc__codig__7E2D9D55">
           <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
           <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -280,7 +280,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__id_ac__35C7EB02">
+        <Association Name="FK__intervenc__id_ac__75985754">
           <End Role="activo" Type="Self.activo" Multiplicity="0..1" />
           <End Role="intervencao" Type="Self.intervencao" Multiplicity="*" />
           <ReferentialConstraint>
@@ -292,7 +292,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__id_in__3F51553C">
+        <Association Name="FK__intervenc__id_in__7F21C18E">
           <End Role="intervencao" Type="Self.intervencao" Multiplicity="1" />
           <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -362,6 +362,9 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
         <Function Name="p_encontrarEquipaParaIntervencao" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int">
           <Parameter Name="id_intervencao" Type="int" Mode="In" />
         </Function>
+        <Function Name="p_encontrarEquipaParaIntervencaoEF" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="id_intervencao" Type="int" Mode="In" />
+        </Function>
         <Function Name="p_inserirFuncionario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="numero_identificacao" Type="int" Mode="In" />
           <Parameter Name="nome" Type="varchar" Mode="In" />
@@ -424,61 +427,60 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
     [vw_Resumo_Intervencao].[modelo_activo] AS [modelo_activo]
     FROM [dbo].[vw_Resumo_Intervencao] AS [vw_Resumo_Intervencao]</DefiningQuery>
           </EntitySet>
-          <AssociationSet Name="FK__activo__tipo__1FD8A9E3" Association="Self.FK__activo__tipo__1FD8A9E3">
+          <AssociationSet Name="FK__activo__tipo__5FA91635" Association="Self.FK__activo__tipo__5FA91635">
             <End Role="tipo_activo" EntitySet="tipo_activo" />
             <End Role="activo" EntitySet="activo" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_fi__id_ac__25918339" Association="Self.FK__activo_fi__id_ac__25918339">
+          <AssociationSet Name="FK__activo_fi__id_ac__6561EF8B" Association="Self.FK__activo_fi__id_ac__6561EF8B">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_filho" EntitySet="activo_filho" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_fi__id_ac__2685A772" Association="Self.FK__activo_fi__id_ac__2685A772">
+          <AssociationSet Name="FK__activo_fi__id_ac__665613C4" Association="Self.FK__activo_fi__id_ac__665613C4">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_filho" EntitySet="activo_filho" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_ge__id_ac__2C3E80C8" Association="Self.FK__activo_ge__id_ac__2C3E80C8">
+          <AssociationSet Name="FK__activo_ge__id_ac__6C0EED1A" Association="Self.FK__activo_ge__id_ac__6C0EED1A">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_gerente" EntitySet="activo_gerente" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_ge__id_ge__2D32A501" Association="Self.FK__activo_ge__id_ge__2D32A501">
+          <AssociationSet Name="FK__activo_ge__id_ge__6D031153" Association="Self.FK__activo_ge__id_ge__6D031153">
             <End Role="funcionario" EntitySet="funcionario" />
             <End Role="activo_gerente" EntitySet="activo_gerente" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_pr__id_ac__22B5168E" Association="Self.FK__activo_pr__id_ac__22B5168E">
+          <AssociationSet Name="FK__activo_pr__id_ac__628582E0" Association="Self.FK__activo_pr__id_ac__628582E0">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_preçocomercial" EntitySet="activo_preçocomercial" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__codig__3B80C458" Association="Self.FK__funcionar__codig__3B80C458">
+          <AssociationSet Name="FK__funcionar__codig__7B5130AA" Association="Self.FK__funcionar__codig__7B5130AA">
             <End Role="equipa" EntitySet="equipa" />
             <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_co__31F75A1E" Association="Self.FK__funcionar__id_co__31F75A1E">
+          <AssociationSet Name="FK__funcionar__id_co__71C7C670" Association="Self.FK__funcionar__id_co__71C7C670">
             <End Role="competencia" EntitySet="competencia" />
             <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_fu__32EB7E57" Association="Self.FK__funcionar__id_fu__32EB7E57">
+          <AssociationSet Name="FK__funcionar__id_fu__72BBEAA9" Association="Self.FK__funcionar__id_fu__72BBEAA9">
             <End Role="funcionario" EntitySet="funcionario" />
             <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_fu__3A8CA01F" Association="Self.FK__funcionar__id_fu__3A8CA01F">
+          <AssociationSet Name="FK__funcionar__id_fu__7A5D0C71" Association="Self.FK__funcionar__id_fu__7A5D0C71">
             <End Role="funcionario" EntitySet="funcionario" />
             <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__codig__3E5D3103" Association="Self.FK__intervenc__codig__3E5D3103">
+          <AssociationSet Name="FK__intervenc__codig__7E2D9D55" Association="Self.FK__intervenc__codig__7E2D9D55">
             <End Role="equipa" EntitySet="equipa" />
             <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__id_ac__35C7EB02" Association="Self.FK__intervenc__id_ac__35C7EB02">
+          <AssociationSet Name="FK__intervenc__id_ac__75985754" Association="Self.FK__intervenc__id_ac__75985754">
             <End Role="activo" EntitySet="activo" />
             <End Role="intervencao" EntitySet="intervencao" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__id_in__3F51553C" Association="Self.FK__intervenc__id_in__3F51553C">
+          <AssociationSet Name="FK__intervenc__id_in__7F21C18E" Association="Self.FK__intervenc__id_in__7F21C18E">
             <End Role="intervencao" EntitySet="intervencao" />
             <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="Project1Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -743,7 +745,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             <Parameter Name="year" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="f_listInterventionsOfYear" IsComposable="true" ReturnType="Collection(Project1Model.f_listInterventionsOfYear_Result)">
-            <Parameter Name="ano" Mode="In" Type="Int32" />
+          <Parameter Name="ano" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="p_actualizaInformacaoFuncionario">
             <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
@@ -772,7 +774,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             <Parameter Name="data_fim" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="p_eliminarEquipa">
-            <Parameter Name="id_equipa" Mode="In" Type="Int32" />
+          <Parameter Name="id_equipa" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="p_inserirFuncionario">
             <Parameter Name="numero_identificacao" Mode="In" Type="Int32" />
@@ -788,11 +790,14 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="p_removerFuncionario">
-            <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
+          <Parameter Name="id_funcionario" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="p_updateInter">
             <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
             <Parameter Name="estado" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="p_encontrarEquipaParaIntervencaoEF" ReturnType="Collection(Int32)">
+            <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
       </Schema>
@@ -967,6 +972,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
           <FunctionImportMapping FunctionImportName="p_removerElementoEquipa" FunctionName="Project1Model.Store.p_removerElementoEquipa" />
           <FunctionImportMapping FunctionImportName="p_removerFuncionario" FunctionName="Project1Model.Store.p_removerFuncionario" />
           <FunctionImportMapping FunctionImportName="p_updateInter" FunctionName="Project1Model.Store.p_updateInter" />
+          <FunctionImportMapping FunctionImportName="p_encontrarEquipaParaIntervencaoEF" FunctionName="Project1Model.Store.p_encontrarEquipaParaIntervencaoEF" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

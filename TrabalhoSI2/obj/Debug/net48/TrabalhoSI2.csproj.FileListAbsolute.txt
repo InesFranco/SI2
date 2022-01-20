@@ -1,0 +1,6 @@
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.csproj.AssemblyReference.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.csproj.SuggestedBindingRedirects.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.AssemblyInfoInputs.cache
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.AssemblyInfo.cs
+C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\obj\Debug\net48\TrabalhoSI2.csproj.CoreCompileInputs.cache

@@ -372,8 +372,8 @@ class Program
 
     private static void AddCompetencias()
     {
-        int idCompetencia = -1;
-        int idFuncionario = -1;
+        int idCompetencia;
+        int idFuncionario;
         while (true)
         {
             try
@@ -492,11 +492,8 @@ class Program
             if (intervencao.id_intervencao != null)
             {
                 intervencao = intervencaoMapper.Read((int)intervencao.id_intervencao);
-
-                Console.WriteLine("id intervenção: " + intervencao.id_intervencao + " id activo " + intervencao.id_activo + " descrição: " + intervencao.descricao
-                            + " estado: " + intervencao.estado + " valor : " + intervencao.estado + " data inicio: " + intervencao.dataInicio + " data fim : " + intervencao.dataFim);
+                printIntervention(intervencao);
             }
-            
         }
     }
 

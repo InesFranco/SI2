@@ -312,5 +312,8 @@
       <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
       <Parameter Name="estado" Mode="In" Type="String" />
     </FunctionImport>
+    <FunctionImport Name="p_encontrarEquipaParaIntervencaoEF" ReturnType="Collection(Int32)">
+      <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
+    </FunctionImport>
   </EntityContainer>
 </Schema>

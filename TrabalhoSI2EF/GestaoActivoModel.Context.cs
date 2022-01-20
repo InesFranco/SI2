@@ -227,5 +227,14 @@ namespace TrabalhoSI2EF
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("p_updateInter", id_intervencaoParameter, estadoParameter);
         }
+    
+        public virtual ObjectResult<Nullable<int>> p_encontrarEquipaParaIntervencaoEF(Nullable<int> id_intervencao)
+        {
+            var id_intervencaoParameter = id_intervencao.HasValue ?
+                new ObjectParameter("id_intervencao", id_intervencao) :
+                new ObjectParameter("id_intervencao", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("p_encontrarEquipaParaIntervencaoEF", id_intervencaoParameter);
+        }
     }
 }

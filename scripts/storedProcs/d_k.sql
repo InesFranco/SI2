@@ -10,6 +10,7 @@ drop procedure if exists p_actualizaInformacaoFuncionario
 drop FUNCTION if exists verificarCompetenciasFuncionario
 drop function if exists verificarCompetenciasEquipa
 drop function if exists encontrarEquipaParaIntervencao
+drop procedure if exists p_encontrarEquipaParaIntervencaoEF
 drop procedure if exists p_criaIntervencao
 drop procedure if exists p_criaEquipa
 drop function if exists f_listInterventionsOfYear
@@ -337,6 +338,13 @@ begin
 
     return @codigoFinal
 end
+GO
+
+
+--dummy procedure for entity framework shenanigans
+create Procedure p_encontrarEquipaParaIntervencaoEF(@id_intervencao int)
+as
+    select dbo.encontrarEquipaParaIntervencao(@id_intervencao)
 GO
 --
 --e) ends here

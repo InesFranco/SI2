@@ -167,5 +167,6 @@
     <FunctionImportMapping FunctionImportName="p_removerElementoEquipa" FunctionName="Project1Model.Store.p_removerElementoEquipa" />
     <FunctionImportMapping FunctionImportName="p_removerFuncionario" FunctionName="Project1Model.Store.p_removerFuncionario" />
     <FunctionImportMapping FunctionImportName="p_updateInter" FunctionName="Project1Model.Store.p_updateInter" />
+    <FunctionImportMapping FunctionImportName="p_encontrarEquipaParaIntervencaoEF" FunctionName="Project1Model.Store.p_encontrarEquipaParaIntervencaoEF" />
   </EntityContainerMapping>
 </Mapping>
