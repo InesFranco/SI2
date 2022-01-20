@@ -22,6 +22,7 @@ BEGIN TRAN
     INSERT INTO funcionario VALUES(4444, 'Thom York', '1970-05-31', 'rua sá', 'reparador piscinas', 987878787, 'anc@hotmail.com')
     INSERT INTO funcionario VALUES(6666, 'Elizabeth Fraser', '1967-04-22', 'rua sao pedro', 'oficial das piscinas', 928181727, 'mccool@hotmail.com')
     INSERT INTO funcionario VALUES(1111, 'Fiona Apple', '1980-05-31', 'rua sá', 'reparador piscinas', 987878787, 'anc@hotmail.com')
+    INSERT INTO funcionario VALUES(4637, 'Diogo Bilé', '1999-06-19', 'Rua Mário da Silva Marques', 'chefe das obras', 935622127, 'diogochulé@hotmail.com')
 
     INSERT INTO activo_gerente VALUES(1, 4)
     INSERT INTO activo_gerente VALUES(2, 2)
@@ -32,6 +33,7 @@ BEGIN TRAN
 
     INSERT INTO competencia VALUES('arranjar piscinas')
     INSERT INTO competencia VALUES('drenar piscinas')
+    INSERT INTO competencia VALUES('arranjar tubo')
 
 
 

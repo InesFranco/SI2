@@ -23,7 +23,7 @@ namespace TrabalhoSI2.mapper
         {
             try
             {
-                entity.codigo_equipa = (int)SQLMapperHelper.ExecuteScalar<decimal>(_ctx, CommandType.StoredProcedure,
+                entity.codigo_equipa = SQLMapperHelper.ExecuteScalar<int>(_ctx, CommandType.StoredProcedure,
                 "p_criaEquipa",
                 new IDbDataParameter[]{
                     new SqlParameter("@localizacao", entity.localizacao),
@@ -119,9 +119,20 @@ namespace TrabalhoSI2.mapper
 
 
         //TODO: add top so we only return top 10 for example
-        public List<IEquipa> ReadAll(int top)
+        public List<EquipaProxy> ReadAll(int top)
         {
-            return SQLMapperHelper.ExecuteMapSet<IEquipa, List<IEquipa>>(_ctx, "select * from equipa", new IDbDataParameter[] {}, EquipaMap);
+            List<EquipaProxy> equipas = new List<EquipaProxy> ();
+            SqlCommand cmd = _ctx.createCommand();
+            cmd.CommandText = "select codigo_equipa from equipa";
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    equipas.Add((EquipaProxy)Read(reader.GetInt32(0)));
+                }
+            }
+            return equipas;
+                
         }
 
         public IEquipa UpdateAddTeamMembers(IEquipa entity, int idFuncionario)

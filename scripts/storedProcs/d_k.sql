@@ -393,16 +393,16 @@ begin try
 
         --adicionar a tabela funcionario equipa
         declare @codigo_equipa int
-        set @codigo_equipa = (select SCOPE_IDENTITY() from equipa)
+        set @codigo_equipa = SCOPE_IDENTITY()
         insert into funcionario_equipa values(@id_supervisor, @codigo_equipa)
-        select SCOPE_IDENTITY()
+        select @codigo_equipa
     commit tran
 end try
 begin catch
     THROW
 end catch
-
 GO
+
 --
 
 

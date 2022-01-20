@@ -16,10 +16,10 @@ namespace TrabalhoSI2.mapper
         {
             this.ctx = ctx;
 
-            base.codigo_equipa = equipa.codigo_equipa;
-            base.id_supervisor = equipa.id_supervisor;
-            base.localizacao = equipa.localizacao;
-            base.num_elems = equipa.num_elems;
+            codigo_equipa = equipa.codigo_equipa;
+            id_supervisor = equipa.id_supervisor;
+            localizacao = equipa.localizacao;
+            num_elems = equipa.num_elems;
             base.TeamMembers = null;
             base.Intervencoes = null;
         }

@@ -31,9 +31,7 @@ class Program
 
             foreach (Equipa e in equipas)
             {
-                Console.Write("Código da Equipa: " + e.codigo_equipa + "- Localização: " + e.localizacao +
-                    "- num_elems: " + e.num_elems + "- id supervisor: " + e.id_supervisor);
-                Console.WriteLine();
+                printTeam(e);
             }
         }
     }
@@ -58,12 +56,16 @@ class Program
         Console.WriteLine("Localização: " + equipa.localizacao);
         Console.WriteLine("Número de Elementos: " + equipa.num_elems);
         Console.WriteLine("id Supervisor: " + equipa.id_supervisor);
+
+        Console.WriteLine("___________________________________________");
+        Console.WriteLine("Elementos de equipa: ");
         foreach(Funcionario member in equipa.TeamMembers)
         {
             Console.WriteLine("Membro: " + member.nome);
             Console.WriteLine("Email: " + member.email);
             Console.WriteLine("Endereço: " + member.endereco);
         }
+        Console.WriteLine("___________________________________________");
         Console.WriteLine();
     }
 
@@ -285,43 +287,40 @@ class Program
 
     private static void AddElementToTeam()
     {
+        printTeams(10);
+
+        Equipa equipa = new Equipa();
+        int idFuncionario;
+        while (true)
+        {
+            try
+            {
+                Console.WriteLine("Acrescentar Elementos a que equipa?");
+                equipa.codigo_equipa = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Qual o id do Funcionário?");
+                idFuncionario = int.Parse(Console.ReadLine());
+                break;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Valor Inválido");
+            }
+        }
         using (IContext ctx = new Context(connectionString))
         {
-            printTeams(10);
             
-            Equipa equipa = new Equipa();
             EquipaMapper equipaMapper = new EquipaMapper(ctx);
-
-            int idFuncionario = -1;
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Acrescentar Elementos a que equipa?");
-                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual o id do Funcionário?");
-                    idFuncionario = int.Parse(Console.ReadLine());
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                }
-            }
             try
             {
                 equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
+                equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
+                printTeam(equipa);
             }catch(SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
             
-
-            foreach (Funcionario funcionario in equipa.TeamMembers)
-            {
-                Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
-            }
         }
     }
 

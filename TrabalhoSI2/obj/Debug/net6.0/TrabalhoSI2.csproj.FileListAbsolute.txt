@@ -69,3 +69,6 @@ C:\Users\Ines\OneDrive - Instituto Superior de Engenharia de Lisboa\Desktop\SI2\
 C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\EntityFramework.SqlServer.dll
 C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\EntityFramework.dll
 C:\Users\ines_\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\System.CodeDom.dll
+C:\Users\Ines\OneDrive - Instituto Superior de Engenharia de Lisboa\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\EntityFramework.SqlServer.dll
+C:\Users\Ines\OneDrive - Instituto Superior de Engenharia de Lisboa\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\EntityFramework.dll
+C:\Users\Ines\OneDrive - Instituto Superior de Engenharia de Lisboa\Desktop\SI2\SI2\TrabalhoSI2\bin\Debug\net6.0\System.CodeDom.dll
