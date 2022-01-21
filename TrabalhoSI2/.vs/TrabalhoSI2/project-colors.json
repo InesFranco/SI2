@@ -15,7 +15,12 @@
       "ProjectGuid": "3745e801-168e-4c3a-a38e-690869ccf9c5",
       "DisplayName": "TrabalhoSI2EF",
       "ColorIndex": 1
+    },
+    "3c47725c-89ce-46a5-8853-e0d87d98852a": {
+      "ProjectGuid": "3c47725c-89ce-46a5-8853-e0d87d98852a",
+      "DisplayName": "TrabalhoSI2_ADO",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 2
+  "NextColorIndex": 3
 }

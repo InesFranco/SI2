@@ -467,7 +467,7 @@ namespace TrabalhoSI2_ADO
                 DateTime dataAquisicao = SQLMapperHelper.ExecuteScalar<DateTime>(ctx, CommandType.Text, "select data_aquisicao from activo where activo_id=@activo_id",
                     new IDbDataParameter[]
                     {
-                new SqlParameter("@activo_id", id_activo)
+                        new SqlParameter("@activo_id", id_activo)
                     });
 
                 if (dataAquisicao > dataInicio)

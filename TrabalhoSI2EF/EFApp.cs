@@ -234,9 +234,6 @@ namespace TrabalhoSI2EF
                 Console.WriteLine(ex.Message);
             }
         }
-
-
-
         private static void printIntervencoesInYear()
         {
             int year;
@@ -255,7 +252,7 @@ namespace TrabalhoSI2EF
             }
 
             var context = new Project1Entities();
-            var interventions = context.f_listInterventionsOfYear(year).ToList<f_listInterventionsOfYear_Result>();
+            var interventions = context.f_listInterventionsOfYear(year).ToList();
             foreach(f_listInterventionsOfYear_Result i in interventions)
             {
                 Console.WriteLine("id intervencao: " + i.id_intervencao);
@@ -263,6 +260,215 @@ namespace TrabalhoSI2EF
             }
            
         }
+
+        private static void AddCompetencias()
+        {
+            int idCompetencia;
+            int idFuncionario;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Qual o id do funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id da competência?");
+                    idCompetencia = int.Parse(Console.ReadLine());
+                    break;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+
+
+            using (var context = new Project1Entities())
+            {
+                context.p_adicionarCompetencias(idFuncionario, idCompetencia);
+                var funcionario = context.funcionarios.ToList().Find(f => f.id_funcionario == idFuncionario);
+
+                Console.WriteLine("id funcionario         : " + funcionario.id_funcionario);
+                Console.WriteLine("número de identificação: " + funcionario.numero_identificacao);
+                Console.WriteLine("nome                   : " + funcionario.nome);
+
+                foreach (competencia c in funcionario.competencias)
+                {
+                    Console.WriteLine("id Competencia: " + c.id_competencia);
+                    Console.WriteLine("descrição     : " + c.descricao);
+                }
+                context.SaveChanges();
+            }
+        }
+
+
+        private static void CreateInterventionNoProcedure()
+        {
+            int id_activo;
+            string descricao;
+            int valor;
+            DateTime dataInicio;
+            DateTime dataFim;
+
+            var cultureInfo = new CultureInfo("pt-PT");
+
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Voltar atrás?(y)");
+                    if (Console.ReadLine().Equals('y')) return;
+
+
+                    Console.WriteLine("Qual é o Id do activo?: ");
+                    id_activo = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual é a descrição da intervenção?: ");
+                    descricao = Console.ReadLine();
+
+                    Console.WriteLine("Qual o valor da intervenção?: ");
+                    valor = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual a data de inicio?(dd-mm-aaaa): ");
+                    dataInicio = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+
+                    Console.WriteLine("Qual a data de fim?(dd-mm-aaaa): ");
+                    dataFim = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+                    if (dataInicio > dataFim)
+                    {
+                        Console.WriteLine("Data de inicio superior a data de fim");
+                    }
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                    continue;
+                }
+
+            }
+
+            using (var ctx = new Project1Entities())
+            {
+                DateTime dataAquisicaoActivo = ctx.activoes.ToList().Find(a => a.activo_id == id_activo).data_aquisicao.Date;
+
+                if (dataAquisicaoActivo > dataInicio)
+                {
+                    Console.WriteLine("Activo obtido depois da data de inicio da intervenção");
+                    return;
+                }
+
+                var intervencao = new intervencao
+                {
+                    valor = valor,
+                    id_activo = id_activo,
+                    estado = "por atribuir",
+                    descricao = descricao,
+                    data_inicio = dataInicio,
+                    data_fim = dataFim
+                };
+
+                ctx.intervencaos.Add(intervencao);
+                ctx.SaveChanges();
+
+                Console.WriteLine("id intervencao: " + intervencao.id_intervencao);
+                Console.WriteLine("Descrição     : " + intervencao.descricao);
+            }
+        }
+
+
+        private static void AttributeAnIntervention()
+        {
+            int id_activo;
+            string descricao;
+            string estado;
+            float valor;
+            DateTime dataInicio;
+            DateTime dataFim;
+
+            var cultureInfo = new CultureInfo("pt-PT");
+
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Voltar atrás?(y)");
+                    if (Console.ReadLine().Equals('y')) return;
+
+
+                    Console.WriteLine("Qual é o Id do activo?: ");
+                    id_activo = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual é o Estado da Intervencao?: ");
+                    estado = Console.ReadLine();
+
+                    Console.WriteLine("Qual é a descrição da intervenção?: ");
+                    descricao = Console.ReadLine();
+
+                    Console.WriteLine("Qual o valor da intervenção?: ");
+                    valor = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual a data de inicio?(dd-mm-aaaa): ");
+                    dataInicio = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+
+                    Console.WriteLine("Qual a data de fim?(dd-mm-aaaa): ");
+                    dataFim = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                    continue;
+                }
+
+            }
+
+
+            var intervencao = new intervencao
+            {
+                id_activo = id_activo,
+                descricao = descricao,
+                valor = valor,
+                estado = estado,
+                data_inicio = dataInicio,
+                data_fim = dataFim
+            };
+            
+            using (var ctx = new Project1Entities())
+            {
+                
+                ctx.intervencaos.Add(intervencao);
+                
+                Console.WriteLine("id intervenção : " + intervencao.id_intervencao + " descrição: " + intervencao.descricao);
+
+                //Assign a team
+                var equipaId = ctx.p_encontrarEquipaParaIntervencaoEF(intervencao.id_intervencao).First();
+                if (equipaId != null)
+                {
+                    var equipa = ctx.equipas.ToList().Find(e => e.codigo_equipa == equipaId);
+                    if (equipa != null)
+                    {
+                        var intervencao_equipa = new intervencao_equipa()
+                        {
+                            codigo_equipa = equipa.codigo_equipa,
+                            id_intervencao = intervencao.id_intervencao,
+                            data_inicio = intervencao.data_inicio
+                        };
+                        ctx.intervencao_equipa.Add(intervencao_equipa);
+                    }
+                    ctx.SaveChanges();
+                }
+                
+
+            }
+        }
+
+
 
 
         public void Run()
@@ -298,17 +504,19 @@ namespace TrabalhoSI2EF
                         case "6":
                             printIntervencoesInYear();
                             break;
-                        /*
-                    case "7":
-                        AddCompetencias();
-                        break;
-                    case "8":
-                        CreateInterventionNoProcedure();
-                        break;
-                    case "9":
-                        AttributeAnIntervention();
-                        break;
-                    */
+                        
+                        case "7":
+                            AddCompetencias();
+                            break;
+                        
+                        case "8":
+                            CreateInterventionNoProcedure();
+                            break;
+                        
+                        case "9":
+                            AttributeAnIntervention();
+                            break;
+                    
                     default:
                             Console.WriteLine("Escolha uma opção válida");
                             break;
