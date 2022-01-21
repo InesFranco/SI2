@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrabalhoSI2EF
+namespace TrabalhoSI2_ADO.Model
 {
-    internal class Program
+    public interface IEntity
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

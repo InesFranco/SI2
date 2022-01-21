@@ -1,0 +1,3 @@
+C:\Users\ines_\Desktop\SI2\SI2\App\obj\Debug\App.csproj.AssemblyReference.cache
+C:\Users\ines_\Desktop\SI2\SI2\App\obj\Debug\App.csproj.SuggestedBindingRedirects.cache
+C:\Users\ines_\Desktop\SI2\SI2\App\obj\Debug\App.csproj.CoreCompileInputs.cache

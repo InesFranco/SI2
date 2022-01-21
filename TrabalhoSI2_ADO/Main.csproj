@@ -64,6 +64,7 @@
     <Compile Include="Concrete\IntervencaoMapper.cs" />
     <Compile Include="DAL\IContext.cs" />
     <Compile Include="Helper\SQLMapperHelper.cs" />
+    <Compile Include="IApplication.cs" />
     <Compile Include="Mapper\EquipaProxy.cs" />
     <Compile Include="Mapper\IActivoMapper.cs" />
     <Compile Include="Mapper\ICompetenciaMapper.cs" />
@@ -77,11 +78,12 @@
     <Compile Include="Model\Funcionario.cs" />
     <Compile Include="Model\IActivo.cs" />
     <Compile Include="Model\ICompetencia.cs" />
+    <Compile Include="Model\IEntity.cs" />
     <Compile Include="Model\IEquipa.cs" />
     <Compile Include="Model\IFuncionario.cs" />
     <Compile Include="Model\IIntervencao.cs" />
     <Compile Include="Model\Intervencao.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="MainApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

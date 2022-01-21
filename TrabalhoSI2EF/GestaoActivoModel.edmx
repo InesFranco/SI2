@@ -148,7 +148,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
           <Property Name="marca_activo" Type="varchar" MaxLength="20" />
           <Property Name="modelo_activo" Type="varchar" MaxLength="20" />
         </EntityType>
-        <Association Name="FK__activo__tipo__5FA91635">
+        <Association Name="FK__activo__tipo__6809520C">
           <End Role="tipo_activo" Type="Self.tipo_activo" Multiplicity="0..1" />
           <End Role="activo" Type="Self.activo" Multiplicity="*" />
           <ReferentialConstraint>
@@ -160,7 +160,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_fi__id_ac__6561EF8B">
+        <Association Name="FK__activo_fi__id_ac__6DC22B62">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
           <ReferentialConstraint>
@@ -172,7 +172,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_fi__id_ac__665613C4">
+        <Association Name="FK__activo_fi__id_ac__6EB64F9B">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_filho" Type="Self.activo_filho" Multiplicity="*" />
           <ReferentialConstraint>
@@ -184,7 +184,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_ge__id_ac__6C0EED1A">
+        <Association Name="FK__activo_ge__id_ac__746F28F1">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
           <ReferentialConstraint>
@@ -196,7 +196,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_ge__id_ge__6D031153">
+        <Association Name="FK__activo_ge__id_ge__75634D2A">
           <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
           <End Role="activo_gerente" Type="Self.activo_gerente" Multiplicity="*" />
           <ReferentialConstraint>
@@ -208,7 +208,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__activo_pr__id_ac__628582E0">
+        <Association Name="FK__activo_pr__id_ac__6AE5BEB7">
           <End Role="activo" Type="Self.activo" Multiplicity="1" />
           <End Role="activo_preçocomercial" Type="Self.activo_preçocomercial" Multiplicity="*" />
           <ReferentialConstraint>
@@ -220,7 +220,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__codig__7B5130AA">
+        <Association Name="FK__funcionar__codig__03B16C81">
           <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
           <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -232,7 +232,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__id_co__71C7C670">
+        <Association Name="FK__funcionar__id_co__7A280247">
           <End Role="competencia" Type="Self.competencia" Multiplicity="1" />
           <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
           <ReferentialConstraint>
@@ -244,19 +244,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__funcionar__id_fu__72BBEAA9">
-          <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
-          <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="funcionario">
-              <PropertyRef Name="id_funcionario" />
-            </Principal>
-            <Dependent Role="funcionario_competencia">
-              <PropertyRef Name="id_funcionario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__funcionar__id_fu__7A5D0C71">
+        <Association Name="FK__funcionar__id_fu__02BD4848">
           <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
           <End Role="funcionario_equipa" Type="Self.funcionario_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -268,7 +256,19 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__codig__7E2D9D55">
+        <Association Name="FK__funcionar__id_fu__7B1C2680">
+          <End Role="funcionario" Type="Self.funcionario" Multiplicity="1" />
+          <End Role="funcionario_competencia" Type="Self.funcionario_competencia" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="funcionario">
+              <PropertyRef Name="id_funcionario" />
+            </Principal>
+            <Dependent Role="funcionario_competencia">
+              <PropertyRef Name="id_funcionario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__intervenc__codig__068DD92C">
           <End Role="equipa" Type="Self.equipa" Multiplicity="1" />
           <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -280,7 +280,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__id_ac__75985754">
+        <Association Name="FK__intervenc__id_ac__7DF8932B">
           <End Role="activo" Type="Self.activo" Multiplicity="0..1" />
           <End Role="intervencao" Type="Self.intervencao" Multiplicity="*" />
           <ReferentialConstraint>
@@ -292,7 +292,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__intervenc__id_in__7F21C18E">
+        <Association Name="FK__intervenc__id_in__0781FD65">
           <End Role="intervencao" Type="Self.intervencao" Multiplicity="1" />
           <End Role="intervencao_equipa" Type="Self.intervencao_equipa" Multiplicity="*" />
           <ReferentialConstraint>
@@ -427,55 +427,55 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
     [vw_Resumo_Intervencao].[modelo_activo] AS [modelo_activo]
     FROM [dbo].[vw_Resumo_Intervencao] AS [vw_Resumo_Intervencao]</DefiningQuery>
           </EntitySet>
-          <AssociationSet Name="FK__activo__tipo__5FA91635" Association="Self.FK__activo__tipo__5FA91635">
+          <AssociationSet Name="FK__activo__tipo__6809520C" Association="Self.FK__activo__tipo__6809520C">
             <End Role="tipo_activo" EntitySet="tipo_activo" />
             <End Role="activo" EntitySet="activo" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_fi__id_ac__6561EF8B" Association="Self.FK__activo_fi__id_ac__6561EF8B">
+          <AssociationSet Name="FK__activo_fi__id_ac__6DC22B62" Association="Self.FK__activo_fi__id_ac__6DC22B62">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_filho" EntitySet="activo_filho" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_fi__id_ac__665613C4" Association="Self.FK__activo_fi__id_ac__665613C4">
+          <AssociationSet Name="FK__activo_fi__id_ac__6EB64F9B" Association="Self.FK__activo_fi__id_ac__6EB64F9B">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_filho" EntitySet="activo_filho" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_ge__id_ac__6C0EED1A" Association="Self.FK__activo_ge__id_ac__6C0EED1A">
+          <AssociationSet Name="FK__activo_ge__id_ac__746F28F1" Association="Self.FK__activo_ge__id_ac__746F28F1">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_gerente" EntitySet="activo_gerente" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_ge__id_ge__6D031153" Association="Self.FK__activo_ge__id_ge__6D031153">
+          <AssociationSet Name="FK__activo_ge__id_ge__75634D2A" Association="Self.FK__activo_ge__id_ge__75634D2A">
             <End Role="funcionario" EntitySet="funcionario" />
             <End Role="activo_gerente" EntitySet="activo_gerente" />
           </AssociationSet>
-          <AssociationSet Name="FK__activo_pr__id_ac__628582E0" Association="Self.FK__activo_pr__id_ac__628582E0">
+          <AssociationSet Name="FK__activo_pr__id_ac__6AE5BEB7" Association="Self.FK__activo_pr__id_ac__6AE5BEB7">
             <End Role="activo" EntitySet="activo" />
             <End Role="activo_preçocomercial" EntitySet="activo_preçocomercial" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__codig__7B5130AA" Association="Self.FK__funcionar__codig__7B5130AA">
+          <AssociationSet Name="FK__funcionar__codig__03B16C81" Association="Self.FK__funcionar__codig__03B16C81">
             <End Role="equipa" EntitySet="equipa" />
             <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_co__71C7C670" Association="Self.FK__funcionar__id_co__71C7C670">
+          <AssociationSet Name="FK__funcionar__id_co__7A280247" Association="Self.FK__funcionar__id_co__7A280247">
             <End Role="competencia" EntitySet="competencia" />
             <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
           </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_fu__72BBEAA9" Association="Self.FK__funcionar__id_fu__72BBEAA9">
-            <End Role="funcionario" EntitySet="funcionario" />
-            <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
-          </AssociationSet>
-          <AssociationSet Name="FK__funcionar__id_fu__7A5D0C71" Association="Self.FK__funcionar__id_fu__7A5D0C71">
+          <AssociationSet Name="FK__funcionar__id_fu__02BD4848" Association="Self.FK__funcionar__id_fu__02BD4848">
             <End Role="funcionario" EntitySet="funcionario" />
             <End Role="funcionario_equipa" EntitySet="funcionario_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__codig__7E2D9D55" Association="Self.FK__intervenc__codig__7E2D9D55">
+          <AssociationSet Name="FK__funcionar__id_fu__7B1C2680" Association="Self.FK__funcionar__id_fu__7B1C2680">
+            <End Role="funcionario" EntitySet="funcionario" />
+            <End Role="funcionario_competencia" EntitySet="funcionario_competencia" />
+          </AssociationSet>
+          <AssociationSet Name="FK__intervenc__codig__068DD92C" Association="Self.FK__intervenc__codig__068DD92C">
             <End Role="equipa" EntitySet="equipa" />
             <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__id_ac__75985754" Association="Self.FK__intervenc__id_ac__75985754">
+          <AssociationSet Name="FK__intervenc__id_ac__7DF8932B" Association="Self.FK__intervenc__id_ac__7DF8932B">
             <End Role="activo" EntitySet="activo" />
             <End Role="intervencao" EntitySet="intervencao" />
           </AssociationSet>
-          <AssociationSet Name="FK__intervenc__id_in__7F21C18E" Association="Self.FK__intervenc__id_in__7F21C18E">
+          <AssociationSet Name="FK__intervenc__id_in__0781FD65" Association="Self.FK__intervenc__id_in__0781FD65">
             <End Role="intervencao" EntitySet="intervencao" />
             <End Role="intervencao_equipa" EntitySet="intervencao_equipa" />
           </AssociationSet>
@@ -797,7 +797,7 @@ warning 6002: The table/view 'Project1.dbo.vw_Resumo_Intervencao' does not have 
             <Parameter Name="estado" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="p_encontrarEquipaParaIntervencaoEF" ReturnType="Collection(Int32)">
-            <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
+          <Parameter Name="id_intervencao" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
       </Schema>

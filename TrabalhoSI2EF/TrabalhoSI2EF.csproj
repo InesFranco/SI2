@@ -93,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GestaoActivoModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="IApplication.cs" />
     <Compile Include="intervencao.cs">
       <DependentUpon>GestaoActivoModel.tt</DependentUpon>
     </Compile>

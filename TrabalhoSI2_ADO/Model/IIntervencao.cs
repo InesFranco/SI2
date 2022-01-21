@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrabalhoSI2_ADO.Model;
 
 namespace TrabalhoSI2.model
 {
-    public interface IIntervencao
+    public interface IIntervencao : IEntity
     {
         int? id_intervencao { get; set; }
         int? id_activo { get; set; }

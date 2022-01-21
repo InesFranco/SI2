@@ -1,62 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TrabalhoSI2_EF;
 
 namespace TrabalhoSI2EF
 {
-    public class EFApp
+    public class EFApp : IApplication<intervencao, equipa>
     {
-        
-        private static void CreateTeam()
+
+        public void CreateTeam()
+        {
+            string localizacao;
+            int idSupervisor;
+
+            while (true)
             {
-                string localizacao;
-                int idSupervisor;
-
-                while (true)
+                try
                 {
-                    try
-                    {
-                        Console.WriteLine("Voltar atrás?(y)");
-                        if (Console.ReadLine().Equals("y")) return;
+                    Console.WriteLine("Voltar atrás?(y)");
+                    if (Console.ReadLine().Equals("y")) return;
 
 
-                        Console.WriteLine("Localização da equipa?: ");
-                        localizacao = Console.ReadLine();
+                    Console.WriteLine("Localização da equipa?: ");
+                    localizacao = Console.ReadLine();
 
-                        Console.WriteLine("Id do Supervisor?: ");
-                        idSupervisor = int.Parse(Console.ReadLine());
+                    Console.WriteLine("Id do Supervisor?: ");
+                    idSupervisor = int.Parse(Console.ReadLine());
 
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Valor Inválido");
-                        continue;
-                    }
+                    break;
                 }
-
-                    var context = new Project1Entities();
-                    var equipa = new equipa()
-                    {
-                        num_elems = 1,
-                        localizacao = localizacao,
-                        id_supervisor = idSupervisor,
-                    };
-                    context.equipas.Add(equipa);
-
-            //TODO PRINT PRETTY
-                    context.equipas.ToList().ForEach(e => Console.WriteLine(e.codigo_equipa));
-                    context.SaveChanges();
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                    continue;
+                }
             }
 
+            var context = new Project1Entities();
+            var equipa = new equipa()
+            {
+                num_elems = 1,
+                localizacao = localizacao,
+                id_supervisor = idSupervisor,
+            };
+            context.equipas.Add(equipa);
 
-        private static void CreateIntervention()
+            //TODO PRINT PRETTY
+            context.equipas.ToList().ForEach(e => Console.WriteLine(e.codigo_equipa));
+            context.SaveChanges();
+        }
+        public void CreateIntervention()
         {
             int id_activo;
             string descricao;
@@ -99,25 +93,24 @@ namespace TrabalhoSI2EF
                 }
 
             }
-            
-                var context = new Project1Entities();
-                var intervencao = context.p_criaIntervencao(id_activo, descricao, valor, dataInicio, dataFim);
-                foreach (Nullable<decimal> result in intervencao)
-                {
-                    intervencao i = context.intervencaos.Find(result);
-                    Console.WriteLine("id intervencao: " + i.id_intervencao);
-                    Console.WriteLine("id activo     : " + i.id_activo);
-                    Console.WriteLine("Descrição     : " + i.descricao);
-                    Console.WriteLine("Estado        : " + i.estado);
-                    Console.WriteLine("Valor         : " + i.valor);
-                    Console.WriteLine("data_inicio   : " + i.data_inicio);
-                    Console.WriteLine("data_fim      : " + i.data_fim);
-                }
+
+            var context = new Project1Entities();
+            var intervencao = context.p_criaIntervencao(id_activo, descricao, valor, dataInicio, dataFim);
+            foreach (Nullable<decimal> result in intervencao)
+            {
+                intervencao i = context.intervencaos.Find(result);
+                Console.WriteLine("id intervencao: " + i.id_intervencao);
+                Console.WriteLine("id activo     : " + i.id_activo);
+                Console.WriteLine("Descrição     : " + i.descricao);
+                Console.WriteLine("Estado        : " + i.estado);
+                Console.WriteLine("Valor         : " + i.valor);
+                Console.WriteLine("data_inicio   : " + i.data_inicio);
+                Console.WriteLine("data_fim      : " + i.data_fim);
+            }
         }
 
-        private static void GetTeamWithQualifications()
+        public equipa GetTeamWithQualifications()
         {
-
             int intervencaoId;
             while (true)
             {
@@ -133,24 +126,23 @@ namespace TrabalhoSI2EF
                 }
             }
 
+            
             var context = new Project1Entities();
             var team = context.p_encontrarEquipaParaIntervencaoEF(intervencaoId);
             foreach (Nullable<decimal> result in team)
             {
                 equipa e = context.equipas.Find(result);
-                Console.WriteLine("código equipa        : " + e.codigo_equipa);
-                Console.WriteLine("localização          : " + e.localizacao);
-                Console.WriteLine("numero de elementos  : " + e.num_elems);
-                Console.WriteLine("id supervisor        : " + e.id_supervisor);
+                printTeam(e);
+                return e;
             }
-
+            return null;
         }
 
-        private static void AddElementToTeam()
+        public void AddElementToTeam()
         {
             var context = new Project1Entities();
-            
-            
+
+
             int idFuncionario;
             int codigoEquipa;
 
@@ -177,22 +169,23 @@ namespace TrabalhoSI2EF
                 var team = context.equipas.Include(f => f.funcionarios).Where(e => e.codigo_equipa == codigoEquipa).FirstOrDefault();
 
                 Console.WriteLine("Membros Equipa:");
-                foreach(funcionario f in team.funcionarios)
+                foreach (funcionario f in team.funcionarios)
                 {
                     Console.WriteLine("id funcionario         : " + f.id_funcionario);
                     Console.WriteLine("número de identificação: " + f.numero_identificacao);
                     Console.WriteLine("nome                   : " + f.nome);
                 }
 
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            
-            
+
+
         }
 
-        private static void RemoveElementInTeam()
+        public void RemoveElementInTeam()
         {
             int idFuncionario;
             int codigoEquipa;
@@ -234,7 +227,7 @@ namespace TrabalhoSI2EF
                 Console.WriteLine(ex.Message);
             }
         }
-        private static void printIntervencoesInYear()
+        public void printIntervencoesInYear()
         {
             int year;
             while (true)
@@ -253,15 +246,15 @@ namespace TrabalhoSI2EF
 
             var context = new Project1Entities();
             var interventions = context.f_listInterventionsOfYear(year).ToList();
-            foreach(f_listInterventionsOfYear_Result i in interventions)
+            foreach (f_listInterventionsOfYear_Result i in interventions)
             {
                 Console.WriteLine("id intervencao: " + i.id_intervencao);
                 Console.WriteLine("Descrição     : " + i.descricao);
             }
-           
+
         }
 
-        private static void AddCompetencias()
+        public void AddCompetencias()
         {
             int idCompetencia;
             int idFuncionario;
@@ -303,7 +296,7 @@ namespace TrabalhoSI2EF
         }
 
 
-        private static void CreateInterventionNoProcedure()
+        public void CreateInterventionNoProcedure()
         {
             int id_activo;
             string descricao;
@@ -380,7 +373,7 @@ namespace TrabalhoSI2EF
         }
 
 
-        private static void AttributeAnIntervention()
+        public void AttributeAnIntervention()
         {
             int id_activo;
             string descricao;
@@ -438,12 +431,12 @@ namespace TrabalhoSI2EF
                 data_inicio = dataInicio,
                 data_fim = dataFim
             };
-            
+
             using (var ctx = new Project1Entities())
             {
-                
+
                 ctx.intervencaos.Add(intervencao);
-                
+
                 Console.WriteLine("id intervenção : " + intervencao.id_intervencao + " descrição: " + intervencao.descricao);
 
                 //Assign a team
@@ -463,81 +456,35 @@ namespace TrabalhoSI2EF
                     }
                     ctx.SaveChanges();
                 }
-                
+
 
             }
         }
 
+        public void printTeams(int top)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void printIntervention(intervencao intervencao)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void printTeam(equipa equipa)
+        {
+            Console.WriteLine("código equipa        : " + equipa.codigo_equipa);
+            Console.WriteLine("localização          : " + equipa.localizacao);
+            Console.WriteLine("numero de elementos  : " + equipa.num_elems);
+            Console.WriteLine("id supervisor        : " + equipa.id_supervisor);
+        }
 
-        public void Run()
-            {
-
-                string input;
-                while (true)
-                {
-                    printOptionsMenu();
-                    input = Console.ReadLine();
-
-                    switch (input)
-                    {
-                        case "1":
-                            GetTeamWithQualifications();
-                            break;
-                    
-                        case "2":
-                            CreateIntervention();
-                            break;
-                        case "3":
-                            CreateTeam();
-                            break;
-                            
-                        case "4":
-                            AddElementToTeam();
-                            break;
-                        
-                        case "5":
-                            RemoveElementInTeam();
-                            break;
-                    
-                        case "6":
-                            printIntervencoesInYear();
-                            break;
-                        
-                        case "7":
-                            AddCompetencias();
-                            break;
-                        
-                        case "8":
-                            CreateInterventionNoProcedure();
-                            break;
-                        
-                        case "9":
-                            AttributeAnIntervention();
-                            break;
-                    
-                    default:
-                            Console.WriteLine("Escolha uma opção válida");
-                            break;
-                    }
-                }
-            }
-
-            private static void printOptionsMenu()
-            {
-                Console.WriteLine("1 : Obter equipa com as qualificações para fazer a intervenção");
-                Console.WriteLine("2 : Criar uma intervenção");
-                Console.WriteLine("3 : Criar uma equipa");
-                Console.WriteLine("4 : Adicionar membro a uma equipa");
-                Console.WriteLine("5 : Remover membro de uma equipa");
-                Console.WriteLine("6 : Imprimir as intervenções de uma dado ano");
-                Console.WriteLine("7 : Adicionar Competências a um funcionário");
-                Console.WriteLine("8 : Criar intervenção sem procedimento");
-                Console.WriteLine("9 : Associar uma intervenção a uma equipa");
-            }
+        public void printIntervention(Project1Entities intervencao)
+        {
+            throw new NotImplementedException();
         }
     }
+}
 
 
 

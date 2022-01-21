@@ -12,108 +12,179 @@ using System.Data.SqlClient;
 using TrabalhoSI2.helper;
 using System.Data;
 using System;
+using TrabalhoSI2EF;
+using TrabalhoSI2_ADO.Model;
+
 
 namespace TrabalhoSI2_ADO
 {
-    class ADOApp
+    class ADOApp : IApplication<Intervencao, Equipa>
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["ex1cs"].ConnectionString;
 
-
-        private static void printTeams(int top)
+        public void AddCompetencias()
         {
+            int idCompetencia;
+            int idFuncionario;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Qual o id do funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id da competência?");
+                    idCompetencia = int.Parse(Console.ReadLine());
+                    break;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+
+            using (Context ctx = new Context(connectionString))
+            {
+                try
+                {
+                    FuncionarioMapper funcionarioMapper = new FuncionarioMapper(ctx);
+                    Funcionario funcionario = funcionarioMapper.Read(idFuncionario);
+
+                    funcionarioMapper.AddCompetencia(funcionario, idCompetencia);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+            }
+        }
+
+        public void AddElementToTeam()
+        {
+            printTeams(10);
+
+            Equipa equipa = new Equipa();
+            int idFuncionario;
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Acrescentar Elementos a que equipa?");
+                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id do Funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
             using (IContext ctx = new Context(connectionString))
             {
-                EquipaMapper mapper = new EquipaMapper(ctx);
 
-                IList<IEquipa> equipas = mapper.ReadAll(top);
-
-                foreach (Equipa e in equipas)
+                EquipaMapper equipaMapper = new EquipaMapper(ctx);
+                try
                 {
-                    printTeam(e);
+                    equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
+                    equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
+                    printTeam(equipa);
                 }
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
             }
         }
 
-        private static void printIntervention(Intervencao intervencao)
+        public void AttributeAnIntervention()
         {
-            Console.WriteLine();
-            Console.WriteLine("id intervenção: " + intervencao.id_intervencao);
-            Console.WriteLine("id activo: " + intervencao.id_activo);
-            Console.WriteLine("descrição: " + intervencao.descricao);
-            Console.WriteLine("estado: " + intervencao.estado);
-            Console.WriteLine("valor : " + intervencao.valor);
-            Console.WriteLine("data inicio: " + intervencao.dataInicio);
-            Console.WriteLine("data fim : " + intervencao.dataFim);
-            Console.WriteLine();
-        }
 
-        private static void printTeam(Equipa equipa)
-        {
-            Console.WriteLine();
-            Console.WriteLine("id Equipa: " + equipa.codigo_equipa);
-            Console.WriteLine("Localização: " + equipa.localizacao);
-            Console.WriteLine("Número de Elementos: " + equipa.num_elems);
-            Console.WriteLine("id Supervisor: " + equipa.id_supervisor);
+            int id_activo;
+            string descricao;
+            string estado;
+            float valor;
+            DateTime dataInicio;
+            DateTime dataFim;
 
-            Console.WriteLine("___________________________________________");
-            Console.WriteLine("Elementos de equipa: ");
-            foreach (Funcionario member in equipa.TeamMembers)
+            var cultureInfo = new CultureInfo("pt-PT");
+
+            while (true)
             {
-                Console.WriteLine("Membro: " + member.nome);
-                Console.WriteLine("Email: " + member.email);
-                Console.WriteLine("Endereço: " + member.endereco);
+                try
+                {
+                    Console.WriteLine("Voltar atrás?(y)");
+                    if (Console.ReadLine().Equals('y')) return;
+
+
+                    Console.WriteLine("Qual é o Id do activo?: ");
+                    id_activo = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual é o Estado da Intervencao?: ");
+                    estado = Console.ReadLine();
+
+                    Console.WriteLine("Qual é a descrição da intervenção?: ");
+                    descricao = Console.ReadLine();
+
+                    Console.WriteLine("Qual o valor da intervenção?: ");
+                    valor = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual a data de inicio?(dd-mm-aaaa): ");
+                    dataInicio = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+
+                    Console.WriteLine("Qual a data de fim?(dd-mm-aaaa): ");
+                    dataFim = DateTime.Parse(Console.ReadLine(), cultureInfo,
+                                            DateTimeStyles.NoCurrentDateDefault);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                    continue;
+                }
+
             }
-            Console.WriteLine("___________________________________________");
-            Console.WriteLine();
+            Intervencao intervencao = new Intervencao();
+            intervencao.id_activo = id_activo;
+            intervencao.descricao = descricao;
+            intervencao.valor = valor;
+            intervencao.dataInicio = dataInicio;
+            intervencao.dataFim = dataFim;
+
+            using (Context ctx = new Context(connectionString))
+            {
+                //Create intervention
+                IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
+                intervencao = intervencaoMapper.Create(intervencao);
+                intervencao.estado = estado;
+                intervencaoMapper.Update(intervencao);      //update intervention status
+
+                Console.WriteLine("id intervenção : " + intervencao.id_intervencao + " descrição: " + intervencao.descricao);
+
+                //Assign a team
+                EquipaMapper equipaMapper = new EquipaMapper(ctx);
+                IEquipa equipa = (Equipa)GetTeamWithQualifications();
+                if (equipa != null)
+                {
+                    equipa = equipaMapper.AssignIntervention(equipa, intervencao);
+
+                    Console.WriteLine("Equipa: " + equipa.codigo_equipa);
+                    Console.WriteLine("Intervenções:");
+                    foreach (Intervencao i in equipa.Intervencoes)
+                    {
+                        Console.WriteLine("Id da Intervenção: " + i.id_intervencao + " Descrição : " + i.descricao);
+                    }
+                }
+
+            }
         }
 
-        private static Equipa GetTeamWithQualifications()
-        {
-            
-                int intervencaoId;
-                while (true)
-                {
-                    try
-                    {
-                        Console.WriteLine("Insere o id da intervenção: ");
-                        intervencaoId = int.Parse(Console.ReadLine());
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Valor Inválido");
-                    }
-                }
-
-                EquipaProxy equipa;
-                using (IContext ctx = new Context(connectionString))
-                {
-        
-                    EquipaMapper equipaMapper = new EquipaMapper(ctx);
-                    equipa = (EquipaProxy)equipaMapper.ReadTeamWithQualifications(intervencaoId);
-                    if (equipa == null)
-                    {
-                        Console.WriteLine("Não existe nenhuma equipa com essas capacidades/disponivel");
-                        return null;
-                    }
-                }
-
-                Console.WriteLine("Equipa : " + equipa.codigo_equipa);
-                Console.WriteLine("Localização : " + equipa.localizacao);
-                Console.WriteLine("Número de Elementos : " + equipa.num_elems);
-                Console.WriteLine("Supervisor : " + equipa.id_supervisor);
-                foreach (Funcionario funcionario in equipa.TeamMembers)
-                {
-                    Console.WriteLine("Funcionario: " + funcionario.nome + " profissão : " + funcionario.profissao);
-                }
-                Console.WriteLine();
-                return equipa;
-            
-        }
-
-
-        private static void CreateIntervention()
+        public void CreateIntervention()
         {
             int id_activo;
             string descricao;
@@ -191,230 +262,9 @@ namespace TrabalhoSI2_ADO
                 }
 
             }
-
         }
 
-
-        private static void CreateTeam()
-        {
-            string localizacao;
-            int idSupervisor;
-
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Voltar atrás?(y)");
-                    if (Console.ReadLine().Equals("y")) return;
-
-
-                    Console.WriteLine("Localização da equipa?: ");
-                    localizacao = Console.ReadLine();
-
-                    Console.WriteLine("Id do Supervisor?: ");
-                    idSupervisor = int.Parse(Console.ReadLine());
-
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                    continue;
-                }
-            }
-
-            try
-            {
-                using (IContext ctx = new Context(connectionString))
-                {
-                    IEquipaMapper equipaMapper = new EquipaMapper(ctx);
-                    IEquipa equipa = new Equipa();
-                    equipa.localizacao = localizacao;
-                    equipa.id_supervisor = idSupervisor;
-                    equipa = equipaMapper.Create(equipa);
-                    equipa = equipaMapper.Read(equipa.codigo_equipa);
-                    printTeam((Equipa)equipa);
-                }
-            }
-            catch (SqlException ex)
-            {
-                // Foreign Key violation
-                if (ex.Number == 547)
-                {
-                    Console.WriteLine("O id do supervisor não existe. Tenta outra vez!");
-                }
-                else
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-
-        }
-
-        private static void printIntervencoesInYear()
-        {
-            int year;
-            while (true)
-            {
-                Console.WriteLine("Produzir Listagem de Intervencao de que ano?");
-                try
-                {
-                    year = int.Parse(Console.ReadLine());
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                }
-            }
-
-
-            IList<Intervencao> intervenctions = new List<Intervencao>();
-            using (IContext ctx = new Context(connectionString))
-            {
-                IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
-                intervenctions = intervencaoMapper.ReadAllYear(year);
-            }
-
-            if (intervenctions.Count() != 0)
-            {
-                Console.WriteLine("Intervenções:");
-                foreach (Intervencao intervencao in intervenctions)
-                {
-                    Console.WriteLine("Id: " + intervencao.id_intervencao + ", Descrição: " + intervencao.descricao);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Não houve intervenções nesse ano!");
-            }
-        }
-
-        private static void AddElementToTeam()
-        {
-            printTeams(10);
-
-            Equipa equipa = new Equipa();
-            int idFuncionario;
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Acrescentar Elementos a que equipa?");
-                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual o id do Funcionário?");
-                    idFuncionario = int.Parse(Console.ReadLine());
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                }
-            }
-            using (IContext ctx = new Context(connectionString))
-            {
-
-                EquipaMapper equipaMapper = new EquipaMapper(ctx);
-                try
-                {
-                    equipa = (Equipa)equipaMapper.UpdateAddTeamMembers(equipa, idFuncionario);
-                    equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
-                    printTeam(equipa);
-                }
-                catch (SqlException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
-            }
-        }
-        private static void RemoveElementInTeam()
-        {
-           
-            int idFuncionario;
-            Equipa equipa = new Equipa();
-
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Retirar Elemento de que equipa?");
-                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual o id do Funcionário?");
-                    idFuncionario = int.Parse(Console.ReadLine());
-                    break;
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                }
-            }
-
-            try
-            {
-                using (IContext ctx = new Context(connectionString))
-                {
-                    printTeams(10);
-
-                    IEquipaMapper equipaMapper = new EquipaMapper(ctx);
-                    equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
-                    equipa = (Equipa)equipaMapper.UpdateRemoveTeamMember(equipa, idFuncionario);
-                    foreach (Funcionario funcionario in equipa.TeamMembers)
-                    {
-                        Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            
-        }
-
-        private static void AddCompetencias()
-        {
-            int idCompetencia;
-            int idFuncionario;
-            while (true)
-            {
-                try
-                {
-                    Console.WriteLine("Qual o id do funcionário?");
-                    idFuncionario = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual o id da competência?");
-                    idCompetencia = int.Parse(Console.ReadLine());
-                    break;
-
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Valor Inválido");
-                }
-            }
-
-            using (Context ctx = new Context(connectionString))
-            {
-                try
-                {
-                    FuncionarioMapper funcionarioMapper = new FuncionarioMapper(ctx);
-                    Funcionario funcionario = funcionarioMapper.Read(idFuncionario);
-
-                    funcionarioMapper.AddCompetencia(funcionario, idCompetencia);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-
-            }
-        }
-
-        private static void CreateInterventionNoProcedure()
+        public void CreateInterventionNoProcedure()
         {
             int id_activo;
             string descricao;
@@ -467,7 +317,7 @@ namespace TrabalhoSI2_ADO
                 DateTime dataAquisicao = SQLMapperHelper.ExecuteScalar<DateTime>(ctx, CommandType.Text, "select data_aquisicao from activo where activo_id=@activo_id",
                     new IDbDataParameter[]
                     {
-                        new SqlParameter("@activo_id", id_activo)
+                                new SqlParameter("@activo_id", id_activo)
                     });
 
                 if (dataAquisicao > dataInicio)
@@ -502,148 +352,240 @@ namespace TrabalhoSI2_ADO
                 }
             }
         }
+        public void CreateTeam()
+            {
+                string localizacao;
+                int idSupervisor;
 
-        private static void AttributeAnIntervention()
+                while (true)
+                {
+                    try
+                    {
+                        Console.WriteLine("Voltar atrás?(y)");
+                        if (Console.ReadLine().Equals("y")) return;
+
+
+                        Console.WriteLine("Localização da equipa?: ");
+                        localizacao = Console.ReadLine();
+
+                        Console.WriteLine("Id do Supervisor?: ");
+                        idSupervisor = int.Parse(Console.ReadLine());
+
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Valor Inválido");
+                        continue;
+                    }
+                }
+
+                try
+                {
+                    using (IContext ctx = new Context(connectionString))
+                    {
+                        IEquipaMapper equipaMapper = new EquipaMapper(ctx);
+                        IEquipa equipa = new Equipa();
+                        equipa.localizacao = localizacao;
+                        equipa.id_supervisor = idSupervisor;
+                        equipa = equipaMapper.Create(equipa);
+                        equipa = equipaMapper.Read(equipa.codigo_equipa);
+                        printTeam((Equipa)equipa);
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    // Foreign Key violation
+                    if (ex.Number == 547)
+                    {
+                        Console.WriteLine("O id do supervisor não existe. Tenta outra vez!");
+                    }
+                    else
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+            }
+
+        public Equipa GetTeamWithQualifications()
         {
-            int id_activo;
-            string descricao;
-            string estado;
-            float valor;
-            DateTime dataInicio;
-            DateTime dataFim;
-
-            var cultureInfo = new CultureInfo("pt-PT");
-
+            int intervencaoId;
             while (true)
             {
                 try
                 {
-                    Console.WriteLine("Voltar atrás?(y)");
-                    if (Console.ReadLine().Equals('y')) return;
-
-
-                    Console.WriteLine("Qual é o Id do activo?: ");
-                    id_activo = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual é o Estado da Intervencao?: ");
-                    estado = Console.ReadLine();
-
-                    Console.WriteLine("Qual é a descrição da intervenção?: ");
-                    descricao = Console.ReadLine();
-
-                    Console.WriteLine("Qual o valor da intervenção?: ");
-                    valor = int.Parse(Console.ReadLine());
-
-                    Console.WriteLine("Qual a data de inicio?(dd-mm-aaaa): ");
-                    dataInicio = DateTime.Parse(Console.ReadLine(), cultureInfo,
-                                            DateTimeStyles.NoCurrentDateDefault);
-
-                    Console.WriteLine("Qual a data de fim?(dd-mm-aaaa): ");
-                    dataFim = DateTime.Parse(Console.ReadLine(), cultureInfo,
-                                            DateTimeStyles.NoCurrentDateDefault);
+                    Console.WriteLine("Insere o id da intervenção: ");
+                    intervencaoId = int.Parse(Console.ReadLine());
                     break;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Valor Inválido");
-                    continue;
                 }
-
             }
-            Intervencao intervencao = new Intervencao();
-            intervencao.id_activo = id_activo;
-            intervencao.descricao = descricao;
-            intervencao.valor = valor;
-            intervencao.dataInicio = dataInicio;
-            intervencao.dataFim = dataFim;
 
-            using (Context ctx = new Context(connectionString))
+            EquipaProxy equipa;
+            using (IContext ctx = new Context(connectionString))
             {
-                //Create intervention
-                IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
-                intervencao = intervencaoMapper.Create(intervencao);
-                intervencao.estado = estado;
-                intervencaoMapper.Update(intervencao);      //update intervention status
 
-                Console.WriteLine("id intervenção : " + intervencao.id_intervencao + " descrição: " + intervencao.descricao);
-
-                //Assign a team
                 EquipaMapper equipaMapper = new EquipaMapper(ctx);
-                IEquipa equipa = GetTeamWithQualifications();
-                if (equipa != null)
+                equipa = (EquipaProxy)equipaMapper.ReadTeamWithQualifications(intervencaoId);
+                if (equipa == null)
                 {
-                    equipa = equipaMapper.AssignIntervention(equipa, intervencao);
-
-                    Console.WriteLine("Equipa: " + equipa.codigo_equipa);
-                    Console.WriteLine("Intervenções:");
-                    foreach (Intervencao i in equipa.Intervencoes)
-                    {
-                        Console.WriteLine("Id da Intervenção: " + i.id_intervencao + " Descrição : " + i.descricao);
-                    }
+                    Console.WriteLine("Não existe nenhuma equipa com essas capacidades/disponivel");
+                    return null;
                 }
-
             }
+
+            Console.WriteLine("Equipa : " + equipa.codigo_equipa);
+            Console.WriteLine("Localização : " + equipa.localizacao);
+            Console.WriteLine("Número de Elementos : " + equipa.num_elems);
+            Console.WriteLine("Supervisor : " + equipa.id_supervisor);
+            foreach (Funcionario funcionario in equipa.TeamMembers)
+            {
+                Console.WriteLine("Funcionario: " + funcionario.nome + " profissão : " + funcionario.profissao);
+            }
+            Console.WriteLine();
+            return equipa;
         }
 
-
-        public void Run()
+        public void printIntervencoesInYear()
         {
-
-            string input;
+            int year;
             while (true)
             {
-                printOptionsMenu();
-                input = Console.ReadLine();
-
-                switch (input)
+                Console.WriteLine("Produzir Listagem de Intervencao de que ano?");
+                try
                 {
-                    case "1":
-                        GetTeamWithQualifications();
-                        break;
-                    case "2":
-                        CreateIntervention();
-                        break;
-                    case "3":
-                        CreateTeam();
-                        break;
-                    case "4":
-                        AddElementToTeam();
-                        break;
-                    case "5":
-                        RemoveElementInTeam();
-                        break;
-                    case "6":
-                        printIntervencoesInYear();
-                        break;
-                    case "7":
-                        AddCompetencias();
-                        break;
-                    case "8":
-                        CreateInterventionNoProcedure();
-                        break;
-                    case "9":
-                        AttributeAnIntervention();
-                        break;
-                    default:
-                        Console.WriteLine("Escolha uma opção válida");
-                        break;
+                    year = int.Parse(Console.ReadLine());
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+
+
+            IList<Intervencao> intervenctions = new List<Intervencao>();
+            using (IContext ctx = new Context(connectionString))
+            {
+                IntervencaoMapper intervencaoMapper = new IntervencaoMapper(ctx);
+                intervenctions = intervencaoMapper.ReadAllYear(year);
+            }
+
+            if (intervenctions.Count() != 0)
+            {
+                Console.WriteLine("Intervenções:");
+                foreach (Intervencao intervencao in intervenctions)
+                {
+                    Console.WriteLine("Id: " + intervencao.id_intervencao + ", Descrição: " + intervencao.descricao);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Não houve intervenções nesse ano!");
+            }
+        
+        }
+
+        public void printIntervention(Intervencao intervencao)
+        {
+            Intervencao inter = (Intervencao)intervencao;
+            Console.WriteLine();
+            Console.WriteLine("id intervenção: " + inter.id_intervencao);
+            Console.WriteLine("id activo: " + inter.id_activo);
+            Console.WriteLine("descrição: " + inter.descricao);
+            Console.WriteLine("estado: " + inter.estado);
+            Console.WriteLine("valor : " + inter.valor);
+            Console.WriteLine("data inicio: " + inter.dataInicio);
+            Console.WriteLine("data fim : " + inter.dataFim);
+            Console.WriteLine();
+        }
+
+        public void printTeam(Equipa equipa)
+        {
+            Equipa equipa1 = (Equipa)equipa;
+            Console.WriteLine();
+            Console.WriteLine("id Equipa: " + equipa1.codigo_equipa);
+            Console.WriteLine("Localização: " + equipa1.localizacao);
+            Console.WriteLine("Número de Elementos: " + equipa1.num_elems);
+            Console.WriteLine("id Supervisor: " + equipa1.id_supervisor);
+
+            Console.WriteLine("___________________________________________");
+            Console.WriteLine("Elementos de equipa: ");
+            foreach (Funcionario member in equipa1.TeamMembers)
+            {
+                Console.WriteLine("Membro: " + member.nome);
+                Console.WriteLine("Email: " + member.email);
+                Console.WriteLine("Endereço: " + member.endereco);
+            }
+            Console.WriteLine("___________________________________________");
+            Console.WriteLine();
+        }
+
+        public void printTeams(int top)
+        {
+            using (IContext ctx = new Context(connectionString))
+            {
+                EquipaMapper mapper = new EquipaMapper(ctx);
+
+                IList<IEquipa> equipas = mapper.ReadAll(top);
+
+                foreach (Equipa e in equipas)
+                {
+                    printTeam(e);
                 }
             }
         }
 
-        private static void printOptionsMenu()
+        public void RemoveElementInTeam()
         {
-            Console.WriteLine("1 : Obter equipa com as qualificações para fazer a intervenção");
-            Console.WriteLine("2 : Criar uma intervenção");
-            Console.WriteLine("3 : Criar uma equipa");
-            Console.WriteLine("4 : Adicionar membro a uma equipa");
-            Console.WriteLine("5 : Remover membro de uma equipa");
-            Console.WriteLine("6 : Imprimir as intervenções de uma dado ano");
-            Console.WriteLine("7 : Adicionar Competências a um funcionário");
-            Console.WriteLine("8 : Criar intervenção sem procedimento");
-            Console.WriteLine("9 : Associar uma intervenção a uma equipa");
+
+            int idFuncionario;
+            Equipa equipa = new Equipa();
+
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Retirar Elemento de que equipa?");
+                    equipa.codigo_equipa = int.Parse(Console.ReadLine());
+
+                    Console.WriteLine("Qual o id do Funcionário?");
+                    idFuncionario = int.Parse(Console.ReadLine());
+                    break;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Valor Inválido");
+                }
+            }
+
+            try
+            {
+                using (IContext ctx = new Context(connectionString))
+                {
+                    printTeams(10);
+
+                    IEquipaMapper equipaMapper = new EquipaMapper(ctx);
+                    equipa = (Equipa)equipaMapper.Read(equipa.codigo_equipa);
+                    equipa = (Equipa)equipaMapper.UpdateRemoveTeamMember(equipa, idFuncionario);
+                    foreach (Funcionario funcionario in equipa.TeamMembers)
+                    {
+                        Console.WriteLine("Membro: " + funcionario.nome + " profissão : " + funcionario.profissao);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
+
     }
+
 }
 
 
